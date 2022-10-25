@@ -159,11 +159,12 @@ public class Main extends Application {
 
         for (Centroid centroid : centroids) {
             for (Point point : centroid.getPointArrayList()) {
-                Circle circle = new Circle();
-                Dot screen = convertToScreen(point);
+                int screenX = point.getX() + graphWidth / 2 + xOffset;
+                int screenY = graphHeight / 2 - point.getY() + yOffset;
 
-                circle.setCenterX(screen.getX());
-                circle.setCenterY(screen.getY());
+                Circle circle = new Circle();
+                circle.setCenterX(screenX);
+                circle.setCenterY(screenY);
                 circle.setRadius(2);
                 circle.setFill(centroid.getColor());
 
@@ -174,8 +175,41 @@ public class Main extends Application {
         root.getChildren().addAll(circleList);
     }
 
+    private void drawOutline(ArrayList<Centroid> centroids) {
+        ArrayList<Circle> circleArrayList = new ArrayList<>();
+
+        for (int x = -300; x < 300; x += 5) {
+            for (int y = -300; y < 300; y += 5) {
+                double minDist = 100000000;
+                Centroid bestCentroid = null;
+
+                for (Centroid centroid : centroids) {
+                    double dist = distance(new Dot(x, y), centroid);
+                    if (dist < minDist) {
+                        minDist = dist;
+                        bestCentroid = centroid;
+                    }
+                }
+
+                int screenX = x + graphWidth / 2 + xOffset;
+                int screenY = graphHeight / 2 - y + yOffset;
+
+                Circle circle = new Circle();
+                circle.setCenterX(screenX);
+                circle.setCenterY(screenY);
+                circle.setRadius(5);
+                circle.setFill(bestCentroid.getColor());
+
+                circleArrayList.add(circle);
+            }
+        }
+
+        root.getChildren().addAll(circleArrayList);
+    }
+
+
     /*============================================*/
-    double distance(Point point, Centroid centroid) {
+    double distance(Dot point, Centroid centroid) {
         double deltaX = centroid.getX() - point.getX();
         double deltaY = centroid.getY() - point.getY();
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -241,7 +275,7 @@ public class Main extends Application {
         drawAxis(30);
         drawBorder();
 
-        for (int i = 0; i < 100; i++) {
+/*        for (int i = 0; i < 1; i++) {
 
             groupPoints(points, centroids);
             drawPointsFromCentroids(centroids);
@@ -260,7 +294,14 @@ public class Main extends Application {
             groupPoints(points, centroids);
             drawPointsFromCentroids(centroids);
             drawCentroids(centroids);
-        }
+            //drawOutline(centroids);
+        }*/
+
+        groupPoints(points, centroids);
+        drawPointsFromCentroids(centroids);
+
+        drawOutline(centroids);
+        drawCentroids(centroids);
 
         stage.setScene(scene);
         stage.show();
