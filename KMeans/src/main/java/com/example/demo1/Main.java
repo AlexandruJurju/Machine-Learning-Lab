@@ -3,7 +3,6 @@ package com.example.demo1;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -144,9 +143,9 @@ public class Main extends Application {
             Circle circle = new Circle();
             circle.setCenterX(screenX);
             circle.setCenterY(screenY);
-            circle.setRadius(7);
-            circle.setStroke(Color.YELLOW);
-            circle.setStrokeWidth(3);
+            circle.setRadius(10);
+            circle.setStroke(Color.INDIGO);
+            circle.setStrokeWidth(5);
             circle.setFill(centroid.getColor());
 
             circleArrayList.add(circle);
@@ -154,6 +153,27 @@ public class Main extends Application {
         root.getChildren().addAll(circleArrayList);
     }
 
+    private void drawPointsFromCentroids(ArrayList<Centroid> centroids) {
+        ArrayList<Circle> circleList = new ArrayList<>();
+
+        for (Centroid centroid : centroids) {
+            for (Point point : centroid.getPointArrayList()) {
+                Circle circle = new Circle();
+                Dot screen = convertToScreen(point);
+
+                circle.setCenterX(screen.getX());
+                circle.setCenterY(screen.getY());
+                circle.setRadius(2);
+                circle.setFill(centroid.getColor());
+
+                circleList.add(circle);
+            }
+        }
+
+        root.getChildren().addAll(circleList);
+    }
+
+    /*============================================*/
     double distance(Point point, Centroid centroid) {
         double deltaX = centroid.getX() - point.getX();
         double deltaY = centroid.getY() - point.getY();
@@ -177,31 +197,34 @@ public class Main extends Application {
         }
     }
 
-    private void drawPointsFromCentroids(ArrayList<Centroid> centroids) {
-        ArrayList<Circle> circleList = new ArrayList<>();
-
-        for (Centroid centroid : centroids) {
-            for (Point point : centroid.getPointArrayList()) {
-                Circle circle = new Circle();
-                Dot screen = convertToScreen(point);
-
-                circle.setCenterX(screen.getX());
-                circle.setCenterY(screen.getY());
-                circle.setRadius(2);
-                circle.setFill(centroid.getColor());
-
-                circleList.add(circle);
-            }
+    private Dot calculateCenterOfGravity(Centroid centroid) {
+        int xSum = 0;
+        int ySum = 0;
+        for (Point point : centroid.getPointArrayList()) {
+            xSum += point.getX();
+            ySum += point.getY();
         }
 
-        root.getChildren().addAll(circleList);
+        int xMean = xSum / centroid.getPointArrayList().size();
+        int yMean = ySum / centroid.getPointArrayList().size();
+
+        return new Dot(xMean, yMean);
     }
 
-
+    private double convergence(Centroid centroid) {
+        double Ec = 0;
+        for (Point point : centroid.getPointArrayList()) {
+            Ec += distance(point, centroid);
+        }
+        return Ec;
+    }
+    
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws IOException, InterruptedException {
         root = new Group();
         Scene scene = new Scene(root, 1250, 750, Color.BLACK);
+
+
         addColors();
 
         drawAxis(30);
@@ -213,6 +236,20 @@ public class Main extends Application {
         groupPoints(points, centroids);
         drawPointsFromCentroids(centroids);
         drawCentroids(centroids);
+        root.getChildren().clear();
+
+
+        for (Centroid centroid : centroids) {
+            Dot centerOfGravity = calculateCenterOfGravity(centroid);
+            centroid.setX(centerOfGravity.getX());
+            centroid.setY(centerOfGravity.getY());
+        }
+        drawAxis(30);
+        drawBorder();
+        groupPoints(points, centroids);
+        drawPointsFromCentroids(centroids);
+        drawCentroids(centroids);
+
 
         stage.setTitle("Main Window");
         stage.setScene(scene);
