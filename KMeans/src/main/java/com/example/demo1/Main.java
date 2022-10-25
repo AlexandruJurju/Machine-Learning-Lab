@@ -1,5 +1,6 @@
 package com.example.demo1;
 
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -181,6 +182,10 @@ public class Main extends Application {
     }
 
     private void groupPoints(ArrayList<Point> pointArrayList, ArrayList<Centroid> centroidArrayList) {
+        for (Centroid centroid : centroidArrayList) {
+            centroid.getPointArrayList().clear();
+        }
+
         for (Point point : pointArrayList) {
             double minDistance = 10000;
             Centroid bestCentroid = null;
@@ -211,47 +216,52 @@ public class Main extends Application {
         return new Dot(xMean, yMean);
     }
 
-    private double convergence(Centroid centroid) {
+    private double convergence(ArrayList<Centroid> centroidArrayList) {
         double Ec = 0;
-        for (Point point : centroid.getPointArrayList()) {
-            Ec += distance(point, centroid);
+
+        for (Centroid centroid : centroidArrayList) {
+            for (Point point : centroid.getPointArrayList()) {
+                Ec += distance(point, centroid);
+            }
         }
+
         return Ec;
     }
-    
+
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
         root = new Group();
         Scene scene = new Scene(root, 1250, 750, Color.BLACK);
-
+        stage.setTitle("Main Window");
 
         addColors();
-
-        drawAxis(30);
-        drawBorder();
-
         ArrayList<Point> points = readFile();
         ArrayList<Centroid> centroids = generateCentroids();
 
-        groupPoints(points, centroids);
-        drawPointsFromCentroids(centroids);
-        drawCentroids(centroids);
-        root.getChildren().clear();
-
-
-        for (Centroid centroid : centroids) {
-            Dot centerOfGravity = calculateCenterOfGravity(centroid);
-            centroid.setX(centerOfGravity.getX());
-            centroid.setY(centerOfGravity.getY());
-        }
         drawAxis(30);
         drawBorder();
-        groupPoints(points, centroids);
-        drawPointsFromCentroids(centroids);
-        drawCentroids(centroids);
 
+        for (int i = 0; i < 100; i++) {
 
-        stage.setTitle("Main Window");
+            groupPoints(points, centroids);
+            drawPointsFromCentroids(centroids);
+            drawCentroids(centroids);
+
+            root.getChildren().clear();
+
+            for (Centroid centroid : centroids) {
+                Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                centroid.setX(centerOfGravity.getX());
+                centroid.setY(centerOfGravity.getY());
+            }
+
+            drawAxis(30);
+            drawBorder();
+            groupPoints(points, centroids);
+            drawPointsFromCentroids(centroids);
+            drawCentroids(centroids);
+        }
+
         stage.setScene(scene);
         stage.show();
     }
