@@ -2,8 +2,11 @@ package com.example.demo1;
 
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -26,6 +29,8 @@ public class Main extends Application {
     private Group root;
 
     private final Random random = new Random();
+
+    private static int step;
 
     public void drawAxis(int overflow) {
         Line oX = new Line();
@@ -258,8 +263,42 @@ public class Main extends Application {
                 Ec += distance(point, centroid);
             }
         }
-
         return Ec;
+    }
+
+    private int stepHandle(ArrayList<Point> points, ArrayList<Centroid> centroids, int step) {
+
+        switch (step) {
+            case 0 -> {
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+
+                groupPoints(points, centroids);
+                drawPointsFromCentroids(centroids);
+                drawCentroids(centroids);
+                return 1;
+            }
+            case 1 -> {
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+
+                for (Centroid centroid : centroids) {
+                    Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                    centroid.setX(centerOfGravity.getX());
+                    centroid.setY(centerOfGravity.getY());
+                }
+                drawAxis(30);
+                drawBorder();
+                groupPoints(points, centroids);
+                drawPointsFromCentroids(centroids);
+                drawCentroids(centroids);
+                return 0;
+            }
+        }
+
+        return -1;
     }
 
     @Override
@@ -272,15 +311,15 @@ public class Main extends Application {
         ArrayList<Point> points = readFile();
         ArrayList<Centroid> centroids = generateCentroids();
 
+        root.getChildren().clear();
         drawAxis(30);
         drawBorder();
 
-/*        for (int i = 0; i < 1; i++) {
+/*        for (int i = 0; i < 25; i++) {
 
             groupPoints(points, centroids);
             drawPointsFromCentroids(centroids);
             drawCentroids(centroids);
-
             root.getChildren().clear();
 
             for (Centroid centroid : centroids) {
@@ -294,14 +333,16 @@ public class Main extends Application {
             groupPoints(points, centroids);
             drawPointsFromCentroids(centroids);
             drawCentroids(centroids);
-            //drawOutline(centroids);
+            root.getChildren().clear();
         }*/
 
-        groupPoints(points, centroids);
-        drawPointsFromCentroids(centroids);
+        Button buttonStep = new Button("STEP");
+        buttonStep.setLayoutX(graphWidth + xOffset + 100);
+        buttonStep.setLayoutY(100);
 
-        drawOutline(centroids);
-        drawCentroids(centroids);
+
+        buttonStep.setOnAction(actionEvent -> step = stepHandle(points, centroids, step));
+        root.getChildren().add(buttonStep);
 
         stage.setScene(scene);
         stage.show();
