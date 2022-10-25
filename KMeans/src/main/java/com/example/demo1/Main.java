@@ -273,6 +273,7 @@ public class Main extends Application {
                 root.getChildren().clear();
                 drawAxis(30);
                 drawBorder();
+                stepButton(points, centroids);
 
                 groupPoints(points, centroids);
                 drawPointsFromCentroids(centroids);
@@ -283,6 +284,7 @@ public class Main extends Application {
                 root.getChildren().clear();
                 drawAxis(30);
                 drawBorder();
+                stepButton(points, centroids);
 
                 for (Centroid centroid : centroids) {
                     Dot centerOfGravity = calculateCenterOfGravity(centroid);
@@ -336,16 +338,19 @@ public class Main extends Application {
             root.getChildren().clear();
         }*/
 
-        Button buttonStep = new Button("STEP");
-        buttonStep.setLayoutX(graphWidth + xOffset + 100);
-        buttonStep.setLayoutY(100);
-
-
-        buttonStep.setOnAction(actionEvent -> step = stepHandle(points, centroids, step));
-        root.getChildren().add(buttonStep);
+        stepButton(points, centroids);
 
         stage.setScene(scene);
         stage.show();
+    }
+
+    private void stepButton(ArrayList<Point> points, ArrayList<Centroid> centroids) {
+        Button buttonStep = new Button("STEP");
+        buttonStep.setLayoutX(graphWidth + xOffset + 100);
+        buttonStep.setLayoutY(100);
+        buttonStep.setOnAction(actionEvent -> step = stepHandle(points, centroids, step));
+
+        root.getChildren().add(buttonStep);
     }
 
 
