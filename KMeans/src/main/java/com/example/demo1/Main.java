@@ -249,10 +249,13 @@ public class Main extends Application {
             ySum += point.getY();
         }
 
-        int xMean = xSum / centroid.getPointArrayList().size();
-        int yMean = ySum / centroid.getPointArrayList().size();
-
-        return new Dot(xMean, yMean);
+        if (xSum != 0 && ySum != 0) {
+            int xMean = xSum / centroid.getPointArrayList().size();
+            int yMean = ySum / centroid.getPointArrayList().size();
+            return new Dot(xMean, yMean);
+        } else {
+            return new Dot(centroid.getX(), centroid.getY());
+        }
     }
 
     private double convergence(ArrayList<Centroid> centroidArrayList) {
@@ -296,7 +299,16 @@ public class Main extends Application {
                 groupPoints(points, centroids);
                 drawPointsFromCentroids(centroids);
                 drawCentroids(centroids);
-                return 0;
+                return 2;
+            }
+            case 2 -> {
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+                stepButton(points, centroids);
+
+                drawOutline(centroids);
+                return 1;
             }
         }
 
