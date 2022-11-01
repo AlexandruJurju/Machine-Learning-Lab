@@ -1,9 +1,6 @@
 package com.example.demo1;
 
-import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -12,9 +9,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -308,20 +303,70 @@ public class Main extends Application {
                 stepButton(points, centroids);
 
                 drawOutline(centroids);
-                return 1;
+                return 0;
             }
         }
 
         return -1;
     }
 
+    public void completeHandle(ArrayList<Point> points, ArrayList<Centroid> centroids) {
+        double cost = -1;
+
+        for (int epoch = 0; epoch < 10; epoch++) {
+            root.getChildren().clear();
+            drawAxis(30);
+            drawBorder();
+            groupPoints(points, centroids);
+            drawPointsFromCentroids(centroids);
+            drawCentroids(centroids);
+
+            root.getChildren().clear();
+            drawAxis(30);
+            drawBorder();
+
+            for (Centroid centroid : centroids) {
+                Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                centroid.setX(centerOfGravity.getX());
+                centroid.setY(centerOfGravity.getY());
+            }
+            drawAxis(30);
+            drawBorder();
+            groupPoints(points, centroids);
+            drawPointsFromCentroids(centroids);
+            drawCentroids(centroids);
+        }
+
+    }
+
+    private void stepButton(ArrayList<Point> points, ArrayList<Centroid> centroids) {
+
+        Button buttonStep = new Button("Step");
+        buttonStep.setLayoutX(graphWidth + xOffset + 100);
+        buttonStep.setLayoutY(100);
+        buttonStep.setOnAction(actionEvent -> step = stepHandle(points, centroids, step));
+
+        root.getChildren().add(buttonStep);
+    }
+
+
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
         root = new Group();
         Scene scene = new Scene(root, 1250, 750, Color.BLACK);
         stage.setTitle("Main Window");
-
         addColors();
+
+        ArrayList<Zone> zoneList = new ArrayList<>();
+        zoneList.add(new Zone(180, 220, 20, 10));
+        zoneList.add(new Zone(0, 110, 10, 20));
+        zoneList.add(new Zone(-150, 40, 20, 15));
+        zoneList.add(new Zone(-200, -100, 10, 10));
+
+        Controller controller = new Controller();
+        ArrayList<Point> generatedPoints = controller.getPoints(zoneList, 10000);
+        controller.writePoints(generatedPoints);
+
         ArrayList<Point> points = readFile();
         ArrayList<Centroid> centroids = generateCentroids();
 
@@ -329,40 +374,19 @@ public class Main extends Application {
         drawAxis(30);
         drawBorder();
 
-/*        for (int i = 0; i < 25; i++) {
-
-            groupPoints(points, centroids);
-            drawPointsFromCentroids(centroids);
-            drawCentroids(centroids);
-            root.getChildren().clear();
-
-            for (Centroid centroid : centroids) {
-                Dot centerOfGravity = calculateCenterOfGravity(centroid);
-                centroid.setX(centerOfGravity.getX());
-                centroid.setY(centerOfGravity.getY());
-            }
-
-            drawAxis(30);
-            drawBorder();
-            groupPoints(points, centroids);
-            drawPointsFromCentroids(centroids);
-            drawCentroids(centroids);
-            root.getChildren().clear();
-        }*/
-
         stepButton(points, centroids);
+
+        Button complete = new Button("Complete");
+        complete.setLayoutX(graphWidth + xOffset + 150);
+        complete.setLayoutY(100);
+        complete.setOnAction(actionEvent -> {
+            completeHandle(points, centroids);
+        });
+        root.getChildren().add(complete);
+
 
         stage.setScene(scene);
         stage.show();
-    }
-
-    private void stepButton(ArrayList<Point> points, ArrayList<Centroid> centroids) {
-        Button buttonStep = new Button("STEP");
-        buttonStep.setLayoutX(graphWidth + xOffset + 100);
-        buttonStep.setLayoutY(100);
-        buttonStep.setOnAction(actionEvent -> step = stepHandle(points, centroids, step));
-
-        root.getChildren().add(buttonStep);
     }
 
 

@@ -1,5 +1,9 @@
 package com.example.demo1;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -64,6 +68,15 @@ public class Controller {
         }
 
         return output;
+    }
+
+    public void writePoints(ArrayList<Point> points) throws IOException {
+        File myFile = new File("src/main/java/points.txt");
+        PrintWriter writer = new PrintWriter(new FileWriter(myFile));
+        for (Point point : points) {
+            writer.println(point.getX() + " " + point.getY() + " " + point.getZone());
+        }
+        writer.close();
     }
 
 }
