@@ -207,7 +207,6 @@ public class Main extends Application {
         root.getChildren().addAll(circleArrayList);
     }
 
-
     /*============================================*/
     double distance(Dot point, Centroid centroid) {
         double deltaX = centroid.getX() - point.getX();
@@ -253,7 +252,7 @@ public class Main extends Application {
         }
     }
 
-    private double convergence(ArrayList<Centroid> centroidArrayList) {
+    private double calculateCostForAllCentroids(ArrayList<Centroid> centroidArrayList) {
         double Ec = 0;
 
         for (Centroid centroid : centroidArrayList) {
@@ -310,35 +309,6 @@ public class Main extends Application {
         return -1;
     }
 
-    public void completeHandle(ArrayList<Point> points, ArrayList<Centroid> centroids) {
-        double cost = -1;
-
-        for (int epoch = 0; epoch < 10; epoch++) {
-            root.getChildren().clear();
-            drawAxis(30);
-            drawBorder();
-            groupPoints(points, centroids);
-            drawPointsFromCentroids(centroids);
-            drawCentroids(centroids);
-
-            root.getChildren().clear();
-            drawAxis(30);
-            drawBorder();
-
-            for (Centroid centroid : centroids) {
-                Dot centerOfGravity = calculateCenterOfGravity(centroid);
-                centroid.setX(centerOfGravity.getX());
-                centroid.setY(centerOfGravity.getY());
-            }
-            drawAxis(30);
-            drawBorder();
-            groupPoints(points, centroids);
-            drawPointsFromCentroids(centroids);
-            drawCentroids(centroids);
-        }
-
-    }
-
     private void stepButton(ArrayList<Point> points, ArrayList<Centroid> centroids) {
 
         Button buttonStep = new Button("Step");
@@ -349,6 +319,124 @@ public class Main extends Application {
         root.getChildren().add(buttonStep);
     }
 
+    private double findMinDistanceOfCentroids(ArrayList<Centroid> centroids) {
+        double min = 10000;
+        for (Centroid centroid : centroids) {
+            for (Point point : centroid.getPointArrayList()) {
+                double distance = distance(point, centroid);
+                if (distance < min) {
+                    min = distance;
+                }
+            }
+        }
+        return min;
+    }
+
+    private double findMinDistanceOfCentroid(Centroid centroid) {
+        double min = 10000;
+        for (Point point : centroid.getPointArrayList()) {
+            double distance = distance(point, centroid);
+            if (distance < min) {
+                min = distance;
+            }
+        }
+        return min;
+    }
+
+    public void removeInvalidCentroids(ArrayList<Centroid> centroids) {
+        ArrayList<Centroid> validList = new ArrayList<>();
+
+        int numberOfPoints = 0;
+        for (Centroid centroid : centroids) {
+            numberOfPoints += centroid.getPointArrayList().size();
+        }
+
+        for (Centroid centroid : centroids) {
+            if (centroid.getPointArrayList().size() < (numberOfPoints * 5) / 100) {
+                centroids.remove(centroid);
+            }
+        }
+    }
+
+    public void completeHandle(ArrayList<Point> points, ArrayList<Centroid> centroids) {
+        double prevCost = -1;
+        double cost = 0;
+        boolean running = true;
+
+        while (running) {
+            while (cost != prevCost) {
+                // 1st step
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+                groupPoints(points, centroids);
+                drawPointsFromCentroids(centroids);
+                drawCentroids(centroids);
+
+                // 2nd step
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+                for (Centroid centroid : centroids) {
+                    Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                    centroid.setX(centerOfGravity.getX());
+                    centroid.setY(centerOfGravity.getY());
+                }
+                groupPoints(points, centroids);
+                drawPointsFromCentroids(centroids);
+                drawCentroids(centroids);
+
+                prevCost = cost;
+                cost = calculateCostForAllCentroids(centroids);
+            }
+
+
+            running = areCentroidsWrong(centroids);
+            if (running) {
+                centroids = generateCentroids();
+            }
+        }
+
+    }
+
+    private boolean areCentroidsWrong(ArrayList<Centroid> centroids) {
+        double min = findMinDistanceOfCentroids(centroids);
+        for (Centroid centroid : centroids) {
+            System.out.println(findMinDistanceOfCentroid(centroid) + " " + min);
+            if (findMinDistanceOfCentroid(centroid) > min) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private void completeButton(ArrayList<Point> points, ArrayList<Centroid> centroids) {
+        Button complete = new Button("Complete");
+        complete.setLayoutX(graphWidth + xOffset + 150);
+        complete.setLayoutY(100);
+        complete.setOnAction(actionEvent -> {
+            completeHandle(points, centroids);
+        });
+        root.getChildren().add(complete);
+    }
+
+    public void drawInitialPoints(ArrayList<Point> points) {
+        ArrayList<Circle> circleList = new ArrayList<>();
+        for (Point point : points) {
+            int screenX = point.getX() + graphWidth / 2 + xOffset;
+            int screenY = graphHeight / 2 - point.getY() + yOffset;
+
+            Circle circle = new Circle();
+            circle.setCenterX(screenX);
+            circle.setCenterY(screenY);
+            circle.setRadius(2);
+            circle.setFill(Color.WHITE);
+
+            circleList.add(circle);
+        }
+        root.getChildren().addAll(circleList);
+    }
 
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
@@ -357,15 +445,15 @@ public class Main extends Application {
         stage.setTitle("Main Window");
         addColors();
 
-        ArrayList<Zone> zoneList = new ArrayList<>();
-        zoneList.add(new Zone(180, 220, 20, 10));
-        zoneList.add(new Zone(0, 110, 10, 20));
-        zoneList.add(new Zone(-150, 40, 20, 15));
-        zoneList.add(new Zone(-200, -100, 10, 10));
-
-        Controller controller = new Controller();
-        ArrayList<Point> generatedPoints = controller.getPoints(zoneList, 10000);
-        controller.writePoints(generatedPoints);
+//        ArrayList<Zone> zoneList = new ArrayList<>();
+//        zoneList.add(new Zone(180, 220, 20, 10));
+//        zoneList.add(new Zone(0, 110, 10, 20));
+//        zoneList.add(new Zone(-150, 40, 20, 15));
+//        zoneList.add(new Zone(-200, -100, 10, 10));
+//
+//        Controller controller = new Controller();
+//        ArrayList<Point> generatedPoints = controller.getPoints(zoneList, 10000);
+//        controller.writePoints(generatedPoints);
 
         ArrayList<Point> points = readFile();
         ArrayList<Centroid> centroids = generateCentroids();
@@ -373,17 +461,11 @@ public class Main extends Application {
         root.getChildren().clear();
         drawAxis(30);
         drawBorder();
+        drawInitialPoints(points);
+
 
         stepButton(points, centroids);
-
-        Button complete = new Button("Complete");
-        complete.setLayoutX(graphWidth + xOffset + 150);
-        complete.setLayoutY(100);
-        complete.setOnAction(actionEvent -> {
-            completeHandle(points, centroids);
-        });
-        root.getChildren().add(complete);
-
+        completeButton(points, centroids);
 
         stage.setScene(scene);
         stage.show();
