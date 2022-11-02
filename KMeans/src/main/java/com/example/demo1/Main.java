@@ -1,5 +1,8 @@
 package com.example.demo1;
 
+import com.example.demo1.Classes.Centroid;
+import com.example.demo1.Classes.Dot;
+import com.example.demo1.Classes.Point;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -24,6 +27,9 @@ public class Main extends Application {
     private Group root;
 
     private final Random random = new Random();
+
+    private Scene scene;
+    private Stage stage;
 
     private static int step;
 
@@ -102,12 +108,6 @@ public class Main extends Application {
         return output;
     }
 
-    public Dot convertToScreen(Dot input) {
-        int screenX = input.getX() + graphWidth / 2 + xOffset;
-        int screenY = graphHeight / 2 - input.getY() + yOffset;
-
-        return new Dot(screenX, screenY);
-    }
 
     private void addColors() {
         colorList.add(Color.GREEN);
@@ -343,7 +343,7 @@ public class Main extends Application {
         return min;
     }
 
-    public void removeInvalidCentroids(ArrayList<Centroid> centroids) {
+    public ArrayList<Centroid> removeInvalidCentroids(ArrayList<Centroid> centroids) {
         ArrayList<Centroid> validList = new ArrayList<>();
 
         int numberOfPoints = 0;
@@ -356,6 +356,8 @@ public class Main extends Application {
                 centroids.remove(centroid);
             }
         }
+        validList = centroids;
+        return validList;
     }
 
     public void completeHandle(ArrayList<Point> points, ArrayList<Centroid> centroids) {
@@ -363,7 +365,7 @@ public class Main extends Application {
         double cost = 0;
         boolean running = true;
 
-        while (running) {
+/*        while (running) {
             while (cost != prevCost) {
                 // 1st step
                 root.getChildren().clear();
@@ -390,21 +392,99 @@ public class Main extends Application {
                 cost = calculateCostForAllCentroids(centroids);
             }
 
+            running = false;
+            for (Centroid centroid : centroids) {
+                if (findMinDistanceOfCentroid(centroid) > 1.0) {
+                    running = true;
+                    break;
+                }
+            }
 
-            running = areCentroidsWrong(centroids);
+            System.out.println(centroids.size());
+
             if (running) {
                 centroids = generateCentroids();
+            } else {
+                root.getChildren().clear();
+                drawAxis(30);
+                drawBorder();
+                groupPoints(points, centroids);
+                drawPointsFromCentroids(centroids);
+                drawCentroids(centroids);
+            }
+        }*/
+
+
+        boolean noUseless = false;
+        while (running) {
+            while (!noUseless) {
+                while (cost != prevCost) {
+                    // 1st step
+                    root.getChildren().clear();
+                    drawAxis(30);
+                    drawBorder();
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids(centroids);
+                    drawCentroids(centroids);
+
+                    // 2nd step
+                    root.getChildren().clear();
+                    drawAxis(30);
+                    drawBorder();
+                    for (Centroid centroid : centroids) {
+                        Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                        centroid.setX(centerOfGravity.getX());
+                        centroid.setY(centerOfGravity.getY());
+                    }
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids(centroids);
+                    drawCentroids(centroids);
+
+                    prevCost = cost;
+                    cost = calculateCostForAllCentroids(centroids);
+                }
+
+                int numberOfPoints = 0;
+                for (Centroid centroid : centroids) {
+                    numberOfPoints += centroid.getPointArrayList().size();
+                }
+
+                noUseless = true;
+                for (Centroid centroid : centroids) {
+                    if (centroid.getPointArrayList().size() < numberOfPoints / 50) {
+                        noUseless = false;
+                        break;
+                    }
+                }
+
+                if (!noUseless) {
+                    root.getChildren().clear();
+                    centroids = removeInvalidCentroids(centroids);
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids(centroids);
+                    drawCentroids(centroids);
+                }
+            }
+
+            running = false;
+            for (Centroid centroid : centroids) {
+                if (findMinDistanceOfCentroid(centroid) < 1.0) {
+                    running = true;
+                    break;
+                }
             }
         }
-
     }
+
 
     private boolean areCentroidsWrong(ArrayList<Centroid> centroids) {
         double min = findMinDistanceOfCentroids(centroids);
         for (Centroid centroid : centroids) {
-            System.out.println(findMinDistanceOfCentroid(centroid) + " " + min);
-            if (findMinDistanceOfCentroid(centroid) > min) {
-                return true;
+            if (centroid.getPointArrayList().size() != 0) {
+                System.out.println(findMinDistanceOfCentroid(centroid));
+                if (findMinDistanceOfCentroid(centroid) > 1.0) {
+                    return true;
+                }
             }
         }
         return false;
@@ -441,8 +521,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException, InterruptedException {
         root = new Group();
-        Scene scene = new Scene(root, 1250, 750, Color.BLACK);
-        stage.setTitle("Main Window");
+        this.scene = new Scene(root, 1250, 750, Color.BLACK);
+        this.stage = stage;
+        this.stage.setTitle("Main Window");
         addColors();
 
 //        ArrayList<Zone> zoneList = new ArrayList<>();
@@ -467,8 +548,8 @@ public class Main extends Application {
         stepButton(points, centroids);
         completeButton(points, centroids);
 
-        stage.setScene(scene);
-        stage.show();
+        this.stage.setScene(scene);
+        this.stage.show();
     }
 
 

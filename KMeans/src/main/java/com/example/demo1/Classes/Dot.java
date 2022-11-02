@@ -1,4 +1,4 @@
-package com.example.demo1;
+package com.example.demo1.Classes;
 
 public class Dot {
     private int x;

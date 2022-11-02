@@ -1,0 +1,17 @@
+X:\Projects\Visual Studio\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.exe
+X:\Projects\Visual Studio\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.deps.json
+X:\Projects\Visual Studio\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.runtimeconfig.json
+X:\Projects\Visual Studio\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.dll
+X:\Projects\Visual Studio\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.pdb
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.AssemblyReference.cache
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.MainForm.resources
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.GenerateResource.cache
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.GeneratedMSBuildEditorConfig.editorconfig
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.AssemblyInfoInputs.cache
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.AssemblyInfo.cs
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.CoreCompileInputs.cache
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.dll
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\refint\Kmeans2.dll
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.pdb
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.genruntimeconfig.cache
+X:\Projects\Visual Studio\Kmeans2\obj\Debug\net6.0-windows\ref\Kmeans2.dll
