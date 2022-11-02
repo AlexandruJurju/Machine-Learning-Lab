@@ -233,7 +233,7 @@ namespace Kmeans2
                     int screenX = point.getX() + graphWidth / 2 + xOffset;
                     int screenY = graphHeight / 2 - point.getY() + yOffset;
 
-                    graphics.FillEllipse(brushDictionary[centroid.getColor()], new Rectangle(screenX, screenY, 3, 3));
+                    graphics.FillEllipse(brushDictionary[centroid.getColor()], new Rectangle(screenX, screenY, 4, 4));
                 }
             }
         }
@@ -325,6 +325,33 @@ namespace Kmeans2
                     drawAxis();
                     step = 0;
                     break;
+            }
+        }
+
+        private void buttonFullRun_MouseClick(object sender, MouseEventArgs e)
+        {
+            double previousCost = -1;
+            double currentCost = 0;
+
+            while (previousCost != currentCost)
+            {
+                groupPoints(points, centroids);
+
+                graphics.Clear(Color.FromArgb(47, 47, 47));
+                drawAxis();
+                foreach (var centroid in centroids)
+                {
+                    Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                    centroid.setX(centerOfGravity.getX());
+                    centroid.setY(centerOfGravity.getY());
+                }
+                groupPoints(points, centroids);
+                drawPointsFromCentroids();
+                drawCentroids();
+                Thread.Sleep(500);
+
+                previousCost = currentCost;
+                currentCost = calculateCostForAllCentroids(centroids);
             }
         }
     }

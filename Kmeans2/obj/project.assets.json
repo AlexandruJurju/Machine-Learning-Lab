@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "X:\\Projects\\Visual Studio\\Kmeans2\\Kmeans2.csproj",
+      "projectUniqueName": "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj",
       "projectName": "Kmeans2",
-      "projectPath": "X:\\Projects\\Visual Studio\\Kmeans2\\Kmeans2.csproj",
+      "projectPath": "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj",
       "packagesPath": "C:\\Users\\realb\\.nuget\\packages\\",
-      "outputPath": "X:\\Projects\\Visual Studio\\Kmeans2\\obj\\",
+      "outputPath": "X:\\School Repos\\Invatare Automata\\Kmeans2\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
