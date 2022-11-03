@@ -346,9 +346,12 @@ namespace Kmeans2
         {
             foreach (var centroid in centroids)
             {
-                if (findMinimalDistanceOfCentroid(centroid) > 1.0)
+                if (centroid.getPointArrayList().Count >= points.Count / 100)
                 {
-                    return true;
+                    if (findMinimalDistanceOfCentroid(centroid) > 1.0)
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
@@ -394,9 +397,12 @@ namespace Kmeans2
                 textBoxCost.AppendText(Environment.NewLine);
                 foreach (var centroid in centroids)
                 {
-                    double minDist = findMinimalDistanceOfCentroid(centroid);
-                    textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
-                    textBoxCost.AppendText(Environment.NewLine);
+                    if (centroid.getPointArrayList().Count >= points.Count / 100)
+                    {
+                        double minDist = findMinimalDistanceOfCentroid(centroid);
+                        textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
+                        textBoxCost.AppendText(Environment.NewLine);
+                    }
                 }
                 textBoxCost.AppendText(Environment.NewLine);
 
