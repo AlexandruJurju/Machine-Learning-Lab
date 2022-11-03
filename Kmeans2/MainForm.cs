@@ -35,11 +35,11 @@ namespace Kmeans2
             colorList.Add(Color.Violet);
             colorList.Add(Color.Cyan);
             colorList.Add(Color.DodgerBlue);
-            colorList.Add(Color.Gold);
+            colorList.Add(Color.Indigo);
             colorList.Add(Color.Red);
-            colorList.Add(Color.Crimson);
+            colorList.Add(Color.HotPink);
             colorList.Add(Color.Lime);
-            colorList.Add(Color.Magenta);
+            colorList.Add(Color.Purple);
 
             foreach (var color in colorList)
             {
@@ -293,6 +293,20 @@ namespace Kmeans2
             Console.WriteLine(points.Count);
         }
 
+        private double findMinimalDistanceOfCentroid(Centroid centroid)
+        {
+            double minimDistance = 1000000000;
+            foreach (var point in centroid.getPointArrayList())
+            {
+                double currentDistance = distance(point, centroid);
+                if (currentDistance < minimDistance)
+                {
+                    minimDistance = currentDistance;
+                }
+            }
+            return minimDistance;
+        }
+
         private void buttonStep_MouseClick(object sender, MouseEventArgs e)
         {
             switch (step)
@@ -332,12 +346,12 @@ namespace Kmeans2
         {
             double previousCost = -1;
             double currentCost = 0;
+            int epoch = 1;
 
             while (previousCost != currentCost)
             {
-                groupPoints(points, centroids);
-
                 graphics.Clear(Color.FromArgb(47, 47, 47));
+                groupPoints(points, centroids);
                 drawAxis();
                 foreach (var centroid in centroids)
                 {
@@ -352,6 +366,17 @@ namespace Kmeans2
 
                 previousCost = currentCost;
                 currentCost = calculateCostForAllCentroids(centroids);
+                textBoxCost.AppendText("E : " + epoch.ToString() + "\t C : " + currentCost.ToString());
+                textBoxCost.AppendText(Environment.NewLine);
+                epoch++;
+            }
+
+            textBoxCost.AppendText(Environment.NewLine);
+            foreach (var centroid in centroids)
+            {
+                double minDist = findMinimalDistanceOfCentroid(centroid);
+                textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
+                textBoxCost.AppendText(Environment.NewLine);
             }
         }
     }
