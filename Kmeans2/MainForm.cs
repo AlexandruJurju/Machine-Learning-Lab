@@ -342,42 +342,74 @@ namespace Kmeans2
             }
         }
 
+        private bool keepRunning()
+        {
+            foreach (var centroid in centroids)
+            {
+                if (findMinimalDistanceOfCentroid(centroid) > 1.0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         private void buttonFullRun_MouseClick(object sender, MouseEventArgs e)
         {
+            bool running = true;
+
             double previousCost = -1;
             double currentCost = 0;
             int epoch = 1;
 
-            while (previousCost != currentCost)
+            while (running)
             {
-                graphics.Clear(Color.FromArgb(47, 47, 47));
-                groupPoints(points, centroids);
-                drawAxis();
+                previousCost = -1;
+                currentCost = 0;
+                epoch = 1;
+
+                while (previousCost != currentCost)
+                {
+                    graphics.Clear(Color.FromArgb(47, 47, 47));
+                    groupPoints(points, centroids);
+                    drawAxis();
+                    foreach (var centroid in centroids)
+                    {
+                        Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                        centroid.setX(centerOfGravity.getX());
+                        centroid.setY(centerOfGravity.getY());
+                    }
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids();
+                    drawCentroids();
+                    Thread.Sleep(500);
+
+                    previousCost = currentCost;
+                    currentCost = calculateCostForAllCentroids(centroids);
+                    textBoxCost.AppendText("E : " + epoch.ToString() + "\t C : " + currentCost.ToString());
+                    textBoxCost.AppendText(Environment.NewLine);
+                    epoch++;
+                }
+
+                textBoxCost.AppendText(Environment.NewLine);
                 foreach (var centroid in centroids)
                 {
-                    Dot centerOfGravity = calculateCenterOfGravity(centroid);
-                    centroid.setX(centerOfGravity.getX());
-                    centroid.setY(centerOfGravity.getY());
+                    double minDist = findMinimalDistanceOfCentroid(centroid);
+                    textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
+                    textBoxCost.AppendText(Environment.NewLine);
                 }
-                groupPoints(points, centroids);
-                drawPointsFromCentroids();
-                drawCentroids();
-                Thread.Sleep(500);
-
-                previousCost = currentCost;
-                currentCost = calculateCostForAllCentroids(centroids);
-                textBoxCost.AppendText("E : " + epoch.ToString() + "\t C : " + currentCost.ToString());
                 textBoxCost.AppendText(Environment.NewLine);
-                epoch++;
+
+
+                running = keepRunning();
+                if (running)
+                {
+                    centroids = generateCentroids();
+                }
             }
 
-            textBoxCost.AppendText(Environment.NewLine);
-            foreach (var centroid in centroids)
-            {
-                double minDist = findMinimalDistanceOfCentroid(centroid);
-                textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
-                textBoxCost.AppendText(Environment.NewLine);
-            }
+
+
         }
     }
 }
