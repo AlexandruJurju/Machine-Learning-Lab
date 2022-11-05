@@ -37,5 +37,10 @@ namespace Kmeans2.Classes
         {
             this.pointArrayList = pointArrayList;
         }
+
+        public override string? ToString()
+        {
+            return color.ToString();
+        }
     }
 }
