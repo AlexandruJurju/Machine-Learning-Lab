@@ -390,7 +390,10 @@ namespace Kmeans2
                     textBoxCost.AppendText(Environment.NewLine);
                 }
 
-                auxCentroids.RemoveAll(centroid => centroid.getColor() == tooCloseList[0].Item1.getColor());
+                foreach (var centroidPair in tooCloseList)
+                {
+                    auxCentroids.RemoveAll(centroid => centroid.getColor() == centroidPair.Item1.getColor());
+                }
 
                 arrangeCentroids(auxCentroids);
                 foreach (var centroid in auxCentroids)
@@ -398,12 +401,9 @@ namespace Kmeans2
                     textBoxCost.AppendText(centroid.ToString());
                     textBoxCost.AppendText(Environment.NewLine);
                 }
-                Thread.Sleep(10000);
+                Thread.Sleep(1000);
             }
-            else
-            {
-                textBoxCost.AppendText("DONE");
-            }
+            textBoxCost.AppendText("DONE");
 
         }
 
