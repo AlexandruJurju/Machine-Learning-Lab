@@ -35,7 +35,7 @@ namespace Kmeans2
             colorList.Add(Color.Blue);
             colorList.Add(Color.SteelBlue);
             colorList.Add(Color.Cyan);
-            colorList.Add(Color.DodgerBlue);
+            colorList.Add(Color.MediumSpringGreen);
             colorList.Add(Color.Sienna);
             colorList.Add(Color.Red);
             colorList.Add(Color.HotPink);
