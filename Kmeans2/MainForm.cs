@@ -2,8 +2,10 @@ using Kmeans2.Classes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Security.Policy;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using static System.Resources.ResXFileRef;
 
 namespace Kmeans2
 {
@@ -47,23 +49,34 @@ namespace Kmeans2
             points = readPointsFromFile();
             centroids = generateCentroids();
 
-            neuronMatrix = new Dot[neuronMatrixSize, neuronMatrixSize];
-            initNeuronPositions(neuronMatrixSize);
+            neuronMatrix = initNeuronPositions(neuronMatrixSize);
         }
 
 
         // SOM
         private void buttonDrawNeurons_Click(object sender, EventArgs e)
         {
-            drawPoints(points);
-            drawNeightbourLines(neuronMatrix);
+            //drawPoints(points);
+            //drawNeightbourLines(neuronMatrix);
+            //drawAxis();
             drawAxis();
+            drawNeurons(neuronMatrix);
+
+            List<Dot> dasdasda = findNeighbours(neuronMatrix, neuronMatrix[1, 1], 1);
+            Brush whiteBrush = new SolidBrush(Color.Crimson);
+            int size = 5;
+            foreach (var neuron in dasdasda)
+            {
+                Dot conv = convertToScreen(neuron);
+                graphics.FillEllipse(whiteBrush, new Rectangle(conv.X - size, conv.Y - size, 2 * size, 2 * size));
+            }
         }
+
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
             foreach (var point in points)
             {
-                Dot nearestNeuron = findNearestNeuron(point, neuronMatrix);
+                Dot nearestNeuron = findNearestNeuron(neuronMatrix, point);
                 int newX = (int)(nearestNeuron.getX() + learningRate * (point.getX() - nearestNeuron.getX()));
                 int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
                 nearestNeuron.setX(newX);
@@ -72,7 +85,7 @@ namespace Kmeans2
             }
         }
 
-        private Dot findNearestNeuron(Dot point, Dot[,] neuronMatrix)
+        private Dot findNearestNeuron(Dot[,] neuronMatrix, Dot point)
         {
             double minDistance = 100000000;
             Dot nearest = null;
@@ -89,19 +102,68 @@ namespace Kmeans2
             return nearest;
         }
 
-        private void initNeuronPositions(int neuronMatrixSize)
+        private Dot[,] initNeuronPositions(int neuronMatrixSize)
         {
+            Dot[,] output = new Dot[neuronMatrixSize, neuronMatrixSize];
+
             int xStep = realGraphWidth / neuronMatrixSize;
             int yStep = realGraphHeight / neuronMatrixSize;
 
+            //for (int i = -realGraphWidth / 2 + xStep / 2, lineCount = 0; i < realGraphWidth / 2; i += xStep, lineCount++)
+            //{
+            //    for (int j = -realGraphHeight / 2 + yStep / 2, columnCount = 0; j < realGraphHeight / 2; j += yStep, columnCount++)
+            //    {
+            //        output[lineCount, 9 - columnCount] = new Dot(i, j);
+            //    }
+            //}
+
             for (int i = -realGraphWidth / 2 + xStep / 2, lineCount = 0; i < realGraphWidth / 2; i += xStep, lineCount++)
             {
-                for (int j = -realGraphHeight / 2 + yStep / 2, columnCount = 0; j < realGraphHeight / 2; j += yStep, columnCount++)
+                for (int j = realGraphHeight / 2 - yStep / 2, columnCount = 0; j > -realGraphHeight / 2; j -= yStep, columnCount++)
                 {
-                    neuronMatrix[lineCount, columnCount] = new Dot(i, j);
+                    output[lineCount, columnCount] = new Dot(i, j);
                 }
             }
+
+            return output;
         }
+
+        public Tuple<int, int> CoordinatesOf(Dot[,] neuronMatrix, Dot point)
+        {
+            int w = neuronMatrix.GetLength(0); // width
+            int h = neuronMatrix.GetLength(1); // height
+
+            for (int x = 0; x < w; ++x)
+            {
+                for (int y = 0; y < h; ++y)
+                {
+                    if (neuronMatrix[x, y].Equals(point))
+                        return Tuple.Create(x, y);
+                }
+            }
+
+            return Tuple.Create(-1, -1);
+        }
+
+        private List<Dot> findNeighbours(Dot[,] neuronMatrix, Dot point, int neighbourhoodDistance)
+        {
+            List<Dot> neightbours = new List<Dot>();
+            Tuple<int, int> origin = CoordinatesOf(neuronMatrix, point);
+
+            int originX = origin.Item1;
+            int originY = origin.Item2;
+
+            for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
+            {
+                for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
+                {
+                    neightbours.Add(neuronMatrix[i, j]);
+                }
+            }
+
+            return neightbours;
+        }
+
 
         private void drawNeurons(Dot[,] neuroMatrix)
         {
@@ -187,7 +249,58 @@ namespace Kmeans2
         }
 
 
+
         // Centroids
+        private void drawAxis()
+        {
+            Pen whitePen = new Pen(Color.White, 1);
+
+            int x1 = xOffset - overflow;
+            int y1 = screenGraphHeight / 2 + yOffset;
+            int x2 = screenGraphWidth + xOffset + overflow;
+            int y2 = screenGraphHeight / 2 + yOffset;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+
+            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
+            y1 = yOffset - overflow;
+            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
+            y2 = screenGraphHeight + yOffset + overflow;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+
+            int xLimit = 300 + screenGraphWidth / 2;
+            int yLimit = screenGraphHeight / 2 - 300;
+
+            //top
+            x1 = (xLimit - 600 + xOffset);
+            y1 = yLimit + yOffset;
+            x2 = (xLimit + xOffset);
+            y2 = yLimit + yOffset;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // bottom
+            x1 = (xLimit - 600 + xOffset);
+            y1 = yLimit + 600 + yOffset;
+            x2 = xLimit + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // left
+            x1 = xLimit - 600 + xOffset;
+            y1 = yLimit + yOffset;
+            x2 = xLimit - 600 + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // right
+            x1 = xLimit + xOffset;
+            y1 = yLimit + yOffset;
+            x2 = xLimit + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+        }
+
         private void initColors()
         {
             colorList.Add(Color.Blue);
@@ -309,55 +422,7 @@ namespace Kmeans2
             return Ec;
         }
 
-        private void drawAxis()
-        {
-            Pen whitePen = new Pen(Color.White, 1);
 
-            int x1 = xOffset - overflow;
-            int y1 = screenGraphHeight / 2 + yOffset;
-            int x2 = screenGraphWidth + xOffset + overflow;
-            int y2 = screenGraphHeight / 2 + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-
-            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y1 = yOffset - overflow;
-            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y2 = screenGraphHeight + yOffset + overflow;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-
-            int xLimit = 300 + screenGraphWidth / 2;
-            int yLimit = screenGraphHeight / 2 - 300;
-
-            //top
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + yOffset;
-            x2 = (xLimit + xOffset);
-            y2 = yLimit + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // bottom
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + 600 + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // left
-            x1 = xLimit - 600 + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit - 600 + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // right
-            x1 = xLimit + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-        }
 
         private void drawPoints(List<MyPoint> points)
         {
