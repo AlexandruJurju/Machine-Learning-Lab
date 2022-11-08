@@ -30,6 +30,17 @@ namespace Kmeans2
 
         }
 
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            this.graphics = this.CreateGraphics();
+            this.BackColor = Color.FromArgb(47, 47, 47);
+            initColors();
+
+            points = readPointsFromFile();
+            centroids = generateCentroids();
+            Console.WriteLine(points.Count);
+        }
+
         private void initColors()
         {
             colorList.Add(Color.Blue);
@@ -151,18 +162,6 @@ namespace Kmeans2
             return Ec;
         }
 
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-            /*            drawAxis();
-                        //drawPoints();
-
-                        int radius = 10;
-                        int screenX = 0 + graphWidth / 2 + xOffset;
-                        int screenY = graphHeight / 2 - 0 + yOffset;
-
-                        graphics.FillEllipse(new SolidBrush(Color.Black), new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));*/
-        }
-
         private void drawAxis()
         {
             Pen whitePen = new Pen(Color.White, 1);
@@ -281,17 +280,6 @@ namespace Kmeans2
 
                 }
             }
-        }
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            this.graphics = this.CreateGraphics();
-            this.BackColor = Color.FromArgb(47, 47, 47);
-            initColors();
-
-            points = readPointsFromFile();
-            centroids = generateCentroids();
-            Console.WriteLine(points.Count);
         }
 
         private double findMinimalDistanceOfCentroid(Centroid centroid)
