@@ -403,6 +403,11 @@ namespace Kmeans2
                 }
                 Thread.Sleep(1000);
             }
+
+
+            auxCentroids.RemoveAll(c => c.getPointArrayList().Count < 10000 / 100);
+            arrangeCentroids(auxCentroids);
+
             textBoxCost.AppendText("DONE");
 
         }
