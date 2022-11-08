@@ -11,35 +11,38 @@ namespace Kmeans2.Classes
         private int x;
         private int y;
 
+        public int Y { get => y; set => y = value; }
+        public int X { get => x; set => x = value; }
+
         public Dot(int x, int y)
         {
-            this.x = x;
-            this.y = y;
+            this.X = x;
+            this.Y = y;
         }
 
         public int getX()
         {
-            return x;
+            return X;
         }
 
         public void setX(int x)
         {
-            this.x = x;
+            this.X = x;
         }
 
         public int getY()
         {
-            return y;
+            return Y;
         }
 
         public void setY(int y)
         {
-            this.y = y;
+            this.Y = y;
         }
 
         public override string? ToString()
         {
-            return x.ToString() + y.ToString() + " ";
+            return X.ToString() + Y.ToString() + " ";
         }
     }
 }

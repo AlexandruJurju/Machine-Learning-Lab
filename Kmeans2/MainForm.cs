@@ -2,18 +2,13 @@ using Kmeans2.Classes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
 
 namespace Kmeans2
 {
     public partial class MainForm : Form
     {
-        List<MyPoint> points = new List<MyPoint>();
-        List<Centroid> centroids = new List<Centroid>();
-        Random random = new Random();
-        int step = 0;
-
-        Graphics graphics;
         int screenGraphWidth = 600;
         int screenGraphHeight = 600;
         int realGraphWidth = 600;
@@ -21,6 +16,12 @@ namespace Kmeans2
         int yOffset = 50;
         int xOffset = 50;
         int overflow = 30;
+        List<MyPoint> points = new List<MyPoint>();
+        Random random = new Random();
+        Graphics graphics;
+
+        List<Centroid> centroids = new List<Centroid>();
+        int step = 0;
         int radius = 5;
         int bigRadius = 8;
         List<Color> colorList = new List<Color>();
@@ -28,6 +29,8 @@ namespace Kmeans2
 
         int neuronMatrixSize = 10;
         Dot[,] neuronMatrix;
+        double learningRate = 0.85;
+        double neighborhoodDistance = 6;
 
         public MainForm()
         {
@@ -50,11 +53,50 @@ namespace Kmeans2
 
 
         // SOM
+        private void buttonDrawNeurons_Click(object sender, EventArgs e)
+        {
+            drawPoints(points);
+            drawNeightbourLines(neuronMatrix);
+            drawAxis();
+        }
+        private void buttonSOMFullRun_Click(object sender, EventArgs e)
+        {
+            foreach (var point in points)
+            {
+                Dot nearestNeuron = findNearestNeuron(point, neuronMatrix);
+                int newX = (int)(nearestNeuron.getX() + learningRate * (point.getX() - nearestNeuron.getX()));
+                int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
+                nearestNeuron.setX(newX);
+                nearestNeuron.setY(newY);
+
+            }
+        }
+
+        private Dot findNearestNeuron(Dot point, Dot[,] neuronMatrix)
+        {
+            double minDistance = 100000000;
+            Dot nearest = null;
+            foreach (var neuron in neuronMatrix)
+            {
+                double currentDistance = distance(point, neuron);
+                if (currentDistance < minDistance)
+                {
+                    minDistance = currentDistance;
+                    nearest = neuron;
+                }
+            }
+
+            return nearest;
+        }
+
         private void initNeuronPositions(int neuronMatrixSize)
         {
-            for (int i = -300 + 30, lineCount = 0; i < 300; i += 60, lineCount++)
+            int xStep = realGraphWidth / neuronMatrixSize;
+            int yStep = realGraphHeight / neuronMatrixSize;
+
+            for (int i = -realGraphWidth / 2 + xStep / 2, lineCount = 0; i < realGraphWidth / 2; i += xStep, lineCount++)
             {
-                for (int j = -300 + 30, columnCount = 0; j < 300; j += 60, columnCount++)
+                for (int j = -realGraphHeight / 2 + yStep / 2, columnCount = 0; j < realGraphHeight / 2; j += yStep, columnCount++)
                 {
                     neuronMatrix[lineCount, columnCount] = new Dot(i, j);
                 }
@@ -69,28 +111,23 @@ namespace Kmeans2
             {
                 for (int j = 0; j < neuronMatrixSize; j++)
                 {
-                    int screenX = neuronMatrix[i, j].getX() + screenGraphWidth / 2 + xOffset;
-                    int screenY = screenGraphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
+                    Dot converted = convertToScreen(neuronMatrix[i, j]);
 
-                    graphics.FillEllipse(blackBrush, new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
+                    graphics.FillEllipse(blackBrush, new Rectangle(converted.getX() - radius, converted.getY() - radius, 2 * radius, 2 * radius));
                 }
             }
         }
 
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
-            Pen whitePen = new Pen(Color.White, 1);
-
-            int x1 = xOffset - overflow;
-            int y1 = screenGraphHeight / 2 + yOffset;
-            int x2 = screenGraphWidth + xOffset + overflow;
-            int y2 = screenGraphHeight / 2 + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            Pen whitePen = new Pen(Color.Black, 2);
 
             for (int i = 0; i < neuronMatrixSize; i++)
             {
                 for (int j = 0; j < neuronMatrixSize; j++)
                 {
+
+                    Dot convertedNeuron = convertToScreen(neuronMatrix[i, j]);
 
                     int screenXNeuron1 = neuronMatrix[i, j].getX() + screenGraphWidth / 2 + xOffset;
                     int screenYNeuron1 = screenGraphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
@@ -126,18 +163,29 @@ namespace Kmeans2
                         int neighbourX = neightbor.getX() + screenGraphWidth / 2 + xOffset;
                         int neighbourY = screenGraphHeight / 2 - neightbor.getY() + yOffset;
 
-                        graphics.DrawLine(whitePen, screenXNeuron1, screenYNeuron1, neighbourX, neighbourY);
+                        Dot convertedNeightbour = convertToScreen(neightbor);
+
+                        graphics.DrawLine(whitePen, convertedNeuron.X, convertedNeuron.Y, convertedNeightbour.X, convertedNeightbour.Y);
                     }
                 }
             }
         }
 
-        private void buttonDrawNeurons_Click(object sender, EventArgs e)
+        private void drawPoint(MyPoint point, int size)
         {
-            drawAxis();
-            drawNeurons(neuronMatrix);
-            drawNeightbourLines(neuronMatrix);
+            Dot converted = convertToScreen(point);
+            Brush whiteBrush = new SolidBrush(Color.White);
+            graphics.FillEllipse(whiteBrush, new Rectangle(converted.X - size, converted.Y - size, 2 * size, 2 * size));
         }
+
+        private Dot convertToScreen(Dot input)
+        {
+            int screenX = input.X + screenGraphWidth / 2 + xOffset;
+            int screenY = screenGraphHeight / 2 - input.Y + yOffset;
+
+            return new Dot(screenX, screenY);
+        }
+
 
         // Centroids
         private void initColors()
@@ -316,10 +364,9 @@ namespace Kmeans2
             Brush whiteBrush = new SolidBrush(Color.White);
             foreach (var point in points)
             {
-                int screenX = point.getX() + screenGraphWidth / 2 + xOffset;
-                int screenY = screenGraphHeight / 2 - point.getY() + yOffset;
+                Dot converted = convertToScreen(point);
 
-                graphics.FillEllipse(whiteBrush, new Rectangle(screenX, screenY, 2, 2));
+                graphics.FillEllipse(whiteBrush, new Rectangle(converted.X, converted.Y, 2, 2));
             }
         }
 
