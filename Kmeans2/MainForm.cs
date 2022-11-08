@@ -64,7 +64,7 @@ namespace Kmeans2
 
             int size = 5;
 
-            Dot origin = neuronMatrix[0, 0];
+            Dot origin = neuronMatrix[0, 4];
             textBoxPrinting.AppendText(origin.ToString());
             Brush whiteBrush = new SolidBrush(Color.Cyan);
 
@@ -133,7 +133,7 @@ namespace Kmeans2
             {
                 for (int j = realGraphHeight / 2 - yStep / 2, columnCount = 0; j > -realGraphHeight / 2; j -= yStep, columnCount++)
                 {
-                    output[columnCount, lineCount] = new Dot(j, i);
+                    output[lineCount, columnCount] = new Dot(i, j);
                 }
             }
 
