@@ -32,7 +32,7 @@ namespace Kmeans2
         int neuronMatrixSize = 10;
         Dot[,] neuronMatrix;
         double learningRate = 0.85;
-        double neighborhoodDistance = 6;
+        int neighborhoodDistance = 6;
 
         public MainForm()
         {
@@ -62,9 +62,17 @@ namespace Kmeans2
             drawAxis();
             drawNeurons(neuronMatrix);
 
-            List<Dot> dasdasda = findNeighbours(neuronMatrix, neuronMatrix[1, 1], 1);
-            Brush whiteBrush = new SolidBrush(Color.Crimson);
             int size = 5;
+
+            Dot origin = neuronMatrix[0, 0];
+            textBoxPrinting.AppendText(origin.ToString());
+            Brush whiteBrush = new SolidBrush(Color.Cyan);
+
+            Dot center = convertToScreen(origin);
+            graphics.FillEllipse(whiteBrush, new Rectangle(center.X - size, center.Y - size, 2 * size, 2 * size));
+
+            List<Dot> dasdasda = findNeighbours(neuronMatrix, origin, 1);
+            whiteBrush = new SolidBrush(Color.Crimson);
             foreach (var neuron in dasdasda)
             {
                 Dot conv = convertToScreen(neuron);
@@ -82,6 +90,10 @@ namespace Kmeans2
                 nearestNeuron.setX(newX);
                 nearestNeuron.setY(newY);
 
+                graphics.Clear(Color.FromArgb(47, 47, 47));
+                drawNeightbourLines(neuronMatrix);
+
+                List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, neighborhoodDistance);
             }
         }
 
@@ -121,7 +133,7 @@ namespace Kmeans2
             {
                 for (int j = realGraphHeight / 2 - yStep / 2, columnCount = 0; j > -realGraphHeight / 2; j -= yStep, columnCount++)
                 {
-                    output[lineCount, columnCount] = new Dot(i, j);
+                    output[columnCount, lineCount] = new Dot(j, i);
                 }
             }
 
@@ -157,13 +169,22 @@ namespace Kmeans2
             {
                 for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
                 {
-                    neightbours.Add(neuronMatrix[i, j]);
+                    if (i >= 0 && i < neuronMatrixSize)
+                    {
+                        if (j >= 0 && j < neuronMatrixSize)
+                        {
+                            if (neuronMatrix[i, j] != point)
+                            {
+                                neightbours.Add(neuronMatrix[i, j]);
+                            }
+                        }
+                    }
+
                 }
             }
 
             return neightbours;
         }
-
 
         private void drawNeurons(Dot[,] neuroMatrix)
         {
@@ -247,7 +268,6 @@ namespace Kmeans2
 
             return new Dot(screenX, screenY);
         }
-
 
 
         // Centroids
@@ -421,7 +441,6 @@ namespace Kmeans2
             }
             return Ec;
         }
-
 
 
         private void drawPoints(List<MyPoint> points)
