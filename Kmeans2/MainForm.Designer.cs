@@ -30,12 +30,12 @@
         {
             this.buttonStep = new System.Windows.Forms.Button();
             this.buttonFullRun = new System.Windows.Forms.Button();
-            this.textBoxCost = new System.Windows.Forms.TextBox();
+            this.textBoxPrinting = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // buttonStep
             // 
-            this.buttonStep.Location = new System.Drawing.Point(792, 77);
+            this.buttonStep.Location = new System.Drawing.Point(797, 77);
             this.buttonStep.Name = "buttonStep";
             this.buttonStep.Size = new System.Drawing.Size(75, 23);
             this.buttonStep.TabIndex = 0;
@@ -45,7 +45,7 @@
             // 
             // buttonFullRun
             // 
-            this.buttonFullRun.Location = new System.Drawing.Point(908, 77);
+            this.buttonFullRun.Location = new System.Drawing.Point(927, 77);
             this.buttonFullRun.Name = "buttonFullRun";
             this.buttonFullRun.Size = new System.Drawing.Size(75, 23);
             this.buttonFullRun.TabIndex = 1;
@@ -53,14 +53,14 @@
             this.buttonFullRun.UseVisualStyleBackColor = true;
             this.buttonFullRun.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonFullRun_MouseClick);
             // 
-            // textBoxCost
+            // textBoxPrinting
             // 
-            this.textBoxCost.Location = new System.Drawing.Point(792, 134);
-            this.textBoxCost.Multiline = true;
-            this.textBoxCost.Name = "textBoxCost";
-            this.textBoxCost.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxCost.Size = new System.Drawing.Size(412, 402);
-            this.textBoxCost.TabIndex = 2;
+            this.textBoxPrinting.Location = new System.Drawing.Point(797, 204);
+            this.textBoxPrinting.Multiline = true;
+            this.textBoxPrinting.Name = "textBoxPrinting";
+            this.textBoxPrinting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.textBoxPrinting.Size = new System.Drawing.Size(412, 402);
+            this.textBoxPrinting.TabIndex = 2;
             // 
             // MainForm
             // 
@@ -68,12 +68,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AntiqueWhite;
             this.ClientSize = new System.Drawing.Size(1272, 711);
-            this.Controls.Add(this.textBoxCost);
+            this.Controls.Add(this.textBoxPrinting);
             this.Controls.Add(this.buttonFullRun);
             this.Controls.Add(this.buttonStep);
             this.Name = "MainForm";
             this.Text = "Main Form";
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.MainForm_Paint);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -83,6 +84,6 @@
 
         private Button buttonStep;
         private Button buttonFullRun;
-        private TextBox textBoxCost;
+        private TextBox textBoxPrinting;
     }
 }

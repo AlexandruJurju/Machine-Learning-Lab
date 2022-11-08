@@ -2,12 +2,12 @@ using Kmeans2.Classes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms.VisualStyles;
 
 namespace Kmeans2
 {
     public partial class MainForm : Form
     {
-
         List<MyPoint> points = new List<MyPoint>();
         List<Centroid> centroids = new List<Centroid>();
         Random random = new Random();
@@ -24,10 +24,12 @@ namespace Kmeans2
         List<Color> colorList = new List<Color>();
         Dictionary<Color, SolidBrush> brushDictionary = new Dictionary<Color, SolidBrush>();
 
+        int neuronMatrixSize = 10;
+        Dot[,] neuronMatrix;
+
         public MainForm()
         {
             InitializeComponent();
-
         }
 
         private void MainForm_Load(object sender, EventArgs e)
@@ -38,9 +40,50 @@ namespace Kmeans2
 
             points = readPointsFromFile();
             centroids = generateCentroids();
-            Console.WriteLine(points.Count);
+
+            neuronMatrix = new Dot[neuronMatrixSize, neuronMatrixSize];
+
+            initNeuronPositions(neuronMatrixSize);
+
         }
 
+        private void MainForm_Paint(object sender, PaintEventArgs e)
+        {
+            drawAxis();
+            drawNeurons(neuronMatrix);
+        }
+
+
+        // SOM
+        private void initNeuronPositions(int neuronMatrixSize)
+        {
+            for (int i = -300 + 30, lineCount = 0; i < 300; i += 60, lineCount++)
+            {
+                for (int j = -300 + 30, columnCount = 0; j < 300; j += 60, columnCount++)
+                {
+                    neuronMatrix[lineCount, columnCount] = new Dot(i, j);
+                }
+            }
+        }
+
+        private void drawNeurons(Dot[,] neuroMatrix)
+        {
+            SolidBrush blackBrush = new SolidBrush(Color.White);
+
+            for (int i = 0; i < neuronMatrixSize; i++)
+            {
+                for (int j = 0; j < neuronMatrixSize; j++)
+                {
+                    int screenX = neuronMatrix[i, j].getX() + graphWidth / 2 + xOffset;
+                    int screenY = graphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
+
+                    graphics.FillEllipse(blackBrush, new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
+                }
+            }
+        }
+
+
+        // Centroids
         private void initColors()
         {
             colorList.Add(Color.Blue);
@@ -212,7 +255,7 @@ namespace Kmeans2
             graphics.DrawLine(whitePen, x1, y1, x2, y2);
         }
 
-        private void drawPoints()
+        private void drawPoints(List<MyPoint> points)
         {
             Brush whiteBrush = new SolidBrush(Color.White);
             foreach (var point in points)
@@ -242,7 +285,6 @@ namespace Kmeans2
         {
             SolidBrush blackBrush = new SolidBrush(Color.White);
             Pen pen = new Pen(Color.White);
-
 
             foreach (var centroid in centroidList)
             {
@@ -374,8 +416,8 @@ namespace Kmeans2
 
                 foreach (var centroidPair in tooCloseList)
                 {
-                    textBoxCost.AppendText(centroidPair.Item1.ToString() + " " + centroidPair.Item2.ToString());
-                    textBoxCost.AppendText(Environment.NewLine);
+                    textBoxPrinting.AppendText(centroidPair.Item1.ToString() + " " + centroidPair.Item2.ToString());
+                    textBoxPrinting.AppendText(Environment.NewLine);
                 }
 
                 foreach (var centroidPair in tooCloseList)
@@ -386,8 +428,8 @@ namespace Kmeans2
                 arrangeCentroids(auxCentroids);
                 foreach (var centroid in auxCentroids)
                 {
-                    textBoxCost.AppendText(centroid.ToString());
-                    textBoxCost.AppendText(Environment.NewLine);
+                    textBoxPrinting.AppendText(centroid.ToString());
+                    textBoxPrinting.AppendText(Environment.NewLine);
                 }
                 Thread.Sleep(1000);
             }
@@ -396,7 +438,7 @@ namespace Kmeans2
             auxCentroids.RemoveAll(c => c.getPointArrayList().Count < 10000 / 100);
             arrangeCentroids(auxCentroids);
 
-            textBoxCost.AppendText("DONE");
+            textBoxPrinting.AppendText("DONE");
 
         }
 
@@ -479,8 +521,8 @@ namespace Kmeans2
 
                 previousCost = currentCost;
                 currentCost = calculateCostForAllCentroids(centroidList);
-                textBoxCost.AppendText("E : " + epoch.ToString() + "\t C : " + currentCost.ToString());
-                textBoxCost.AppendText(Environment.NewLine);
+                textBoxPrinting.AppendText("E : " + epoch.ToString() + "\t C : " + currentCost.ToString());
+                textBoxPrinting.AppendText(Environment.NewLine);
                 epoch++;
             }
             graphics.Clear(Color.FromArgb(47, 47, 47));
@@ -495,19 +537,23 @@ namespace Kmeans2
 
         private void writeFinalCentroidDistances(List<Centroid> centroidList)
         {
-            textBoxCost.AppendText(Environment.NewLine);
+            textBoxPrinting.AppendText(Environment.NewLine);
             foreach (var centroid in centroidList)
             {
                 if (centroid.getPointArrayList().Count >= points.Count / 100)
                 {
                     double minDist = findMinimalDistanceOfCentroid(centroid);
-                    textBoxCost.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
-                    textBoxCost.AppendText(Environment.NewLine);
+                    textBoxPrinting.AppendText("Centroid : " + centroid.getColor() + " Min distance : " + minDist);
+                    textBoxPrinting.AppendText(Environment.NewLine);
                 }
             }
-            textBoxCost.AppendText("====================================");
-            textBoxCost.AppendText(Environment.NewLine);
-            textBoxCost.AppendText(Environment.NewLine);
+            textBoxPrinting.AppendText("====================================");
+            textBoxPrinting.AppendText(Environment.NewLine);
+            textBoxPrinting.AppendText(Environment.NewLine);
         }
+
+
+
+
     }
 }

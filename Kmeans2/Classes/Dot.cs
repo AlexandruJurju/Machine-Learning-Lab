@@ -36,5 +36,10 @@ namespace Kmeans2.Classes
         {
             this.y = y;
         }
+
+        public override string? ToString()
+        {
+            return x.ToString() + y.ToString() + " ";
+        }
     }
 }
