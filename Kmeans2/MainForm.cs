@@ -14,8 +14,10 @@ namespace Kmeans2
         int step = 0;
 
         Graphics graphics;
-        int graphWidth = 600;
-        int graphHeight = 600;
+        int screenGraphWidth = 600;
+        int screenGraphHeight = 600;
+        int realGraphWidth = 600;
+        int realGraphHeight = 600;
         int yOffset = 50;
         int xOffset = 50;
         int overflow = 30;
@@ -34,6 +36,7 @@ namespace Kmeans2
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            this.WindowState = FormWindowState.Maximized;
             this.graphics = this.CreateGraphics();
             this.BackColor = Color.FromArgb(47, 47, 47);
             initColors();
@@ -42,15 +45,7 @@ namespace Kmeans2
             centroids = generateCentroids();
 
             neuronMatrix = new Dot[neuronMatrixSize, neuronMatrixSize];
-
             initNeuronPositions(neuronMatrixSize);
-
-        }
-
-        private void MainForm_Paint(object sender, PaintEventArgs e)
-        {
-            drawAxis();
-            drawNeurons(neuronMatrix);
         }
 
 
@@ -74,14 +69,75 @@ namespace Kmeans2
             {
                 for (int j = 0; j < neuronMatrixSize; j++)
                 {
-                    int screenX = neuronMatrix[i, j].getX() + graphWidth / 2 + xOffset;
-                    int screenY = graphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
+                    int screenX = neuronMatrix[i, j].getX() + screenGraphWidth / 2 + xOffset;
+                    int screenY = screenGraphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
 
                     graphics.FillEllipse(blackBrush, new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
                 }
             }
         }
 
+        private void drawNeightbourLines(Dot[,] neuronMatrix)
+        {
+            Pen whitePen = new Pen(Color.White, 1);
+
+            int x1 = xOffset - overflow;
+            int y1 = screenGraphHeight / 2 + yOffset;
+            int x2 = screenGraphWidth + xOffset + overflow;
+            int y2 = screenGraphHeight / 2 + yOffset;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            for (int i = 0; i < neuronMatrixSize; i++)
+            {
+                for (int j = 0; j < neuronMatrixSize; j++)
+                {
+
+                    int screenXNeuron1 = neuronMatrix[i, j].getX() + screenGraphWidth / 2 + xOffset;
+                    int screenYNeuron1 = screenGraphHeight / 2 - neuronMatrix[i, j].getY() + yOffset;
+
+                    List<Dot> neightbours = new List<Dot>();
+
+                    if (i - 1 >= 0)
+                    {
+                        Dot upNeuron = neuronMatrix[i - 1, j];
+                        neightbours.Add(upNeuron);
+                    }
+
+                    if (i + 1 < neuronMatrixSize)
+                    {
+                        Dot downNeuron = neuronMatrix[i + 1, j];
+                        neightbours.Add(downNeuron);
+                    }
+
+                    if (j - 1 >= 0)
+                    {
+                        Dot leftNeuron = neuronMatrix[i, j - 1];
+                        neightbours.Add(leftNeuron);
+                    }
+
+                    if (j + 1 < neuronMatrixSize)
+                    {
+                        Dot rightNeuron = neuronMatrix[i, j + 1];
+                        neightbours.Add(rightNeuron);
+                    }
+
+                    foreach (var neightbor in neightbours)
+                    {
+                        int neighbourX = neightbor.getX() + screenGraphWidth / 2 + xOffset;
+                        int neighbourY = screenGraphHeight / 2 - neightbor.getY() + yOffset;
+
+                        graphics.DrawLine(whitePen, screenXNeuron1, screenYNeuron1, neighbourX, neighbourY);
+                    }
+                }
+            }
+        }
+
+        private void buttonDrawNeurons_Click(object sender, EventArgs e)
+        {
+            drawAxis();
+            drawNeurons(neuronMatrix);
+            drawNeightbourLines(neuronMatrix);
+        }
 
         // Centroids
         private void initColors()
@@ -210,21 +266,21 @@ namespace Kmeans2
             Pen whitePen = new Pen(Color.White, 1);
 
             int x1 = xOffset - overflow;
-            int y1 = graphHeight / 2 + yOffset;
-            int x2 = graphWidth + xOffset + overflow;
-            int y2 = graphHeight / 2 + yOffset;
+            int y1 = screenGraphHeight / 2 + yOffset;
+            int x2 = screenGraphWidth + xOffset + overflow;
+            int y2 = screenGraphHeight / 2 + yOffset;
             graphics.DrawLine(whitePen, x1, y1, x2, y2);
 
 
-            x1 = (int)(graphWidth / 2.0 + xOffset);
+            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
             y1 = yOffset - overflow;
-            x2 = (int)(graphWidth / 2.0 + xOffset);
-            y2 = graphHeight + yOffset + overflow;
+            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
+            y2 = screenGraphHeight + yOffset + overflow;
             graphics.DrawLine(whitePen, x1, y1, x2, y2);
 
 
-            int xLimit = 300 + graphWidth / 2;
-            int yLimit = graphHeight / 2 - 300;
+            int xLimit = 300 + screenGraphWidth / 2;
+            int yLimit = screenGraphHeight / 2 - 300;
 
             //top
             x1 = (xLimit - 600 + xOffset);
@@ -260,8 +316,8 @@ namespace Kmeans2
             Brush whiteBrush = new SolidBrush(Color.White);
             foreach (var point in points)
             {
-                int screenX = point.getX() + graphWidth / 2 + xOffset;
-                int screenY = graphHeight / 2 - point.getY() + yOffset;
+                int screenX = point.getX() + screenGraphWidth / 2 + xOffset;
+                int screenY = screenGraphHeight / 2 - point.getY() + yOffset;
 
                 graphics.FillEllipse(whiteBrush, new Rectangle(screenX, screenY, 2, 2));
             }
@@ -273,8 +329,8 @@ namespace Kmeans2
             {
                 foreach (var point in centroid.getPointArrayList())
                 {
-                    int screenX = point.getX() + graphWidth / 2 + xOffset;
-                    int screenY = graphHeight / 2 - point.getY() + yOffset;
+                    int screenX = point.getX() + screenGraphWidth / 2 + xOffset;
+                    int screenY = screenGraphHeight / 2 - point.getY() + yOffset;
 
                     graphics.FillEllipse(brushDictionary[centroid.getColor()], new Rectangle(screenX, screenY, 4, 4));
                 }
@@ -288,8 +344,8 @@ namespace Kmeans2
 
             foreach (var centroid in centroidList)
             {
-                int screenX = centroid.getX() + graphWidth / 2 + xOffset;
-                int screenY = graphHeight / 2 - centroid.getY() + yOffset;
+                int screenX = centroid.getX() + screenGraphWidth / 2 + xOffset;
+                int screenY = screenGraphHeight / 2 - centroid.getY() + yOffset;
 
                 graphics.FillEllipse(blackBrush, new Rectangle(screenX - bigRadius, screenY - bigRadius, 2 * bigRadius, 2 * bigRadius));
                 graphics.FillEllipse(brushDictionary[centroid.getColor()], new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
@@ -315,8 +371,8 @@ namespace Kmeans2
                         }
                     }
 
-                    int screenX = x + graphWidth / 2 + xOffset;
-                    int screenY = graphHeight / 2 - y + yOffset;
+                    int screenX = x + screenGraphWidth / 2 + xOffset;
+                    int screenY = screenGraphHeight / 2 - y + yOffset;
 
                     graphics.FillEllipse(brushDictionary[bestCentroid.getColor()], new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
 
@@ -551,8 +607,6 @@ namespace Kmeans2
             textBoxPrinting.AppendText(Environment.NewLine);
             textBoxPrinting.AppendText(Environment.NewLine);
         }
-
-
 
 
     }
