@@ -31,8 +31,6 @@ namespace Kmeans2
 
         int neuronMatrixSize = 10;
         Dot[,] neuronMatrix;
-        double learningRate = 0.85;
-        int neighborhoodDistance = 6;
 
         public MainForm()
         {
@@ -59,42 +57,51 @@ namespace Kmeans2
             //drawPoints(points);
             //drawNeightbourLines(neuronMatrix);
             //drawAxis();
-            drawAxis();
-            drawNeurons(neuronMatrix);
 
-            int size = 5;
-
-            Dot origin = neuronMatrix[0, 4];
-            textBoxPrinting.AppendText(origin.ToString());
-            Brush whiteBrush = new SolidBrush(Color.Cyan);
-
-            Dot center = convertToScreen(origin);
-            graphics.FillEllipse(whiteBrush, new Rectangle(center.X - size, center.Y - size, 2 * size, 2 * size));
-
-            List<Dot> dasdasda = findNeighbours(neuronMatrix, origin, 1);
-            whiteBrush = new SolidBrush(Color.Crimson);
-            foreach (var neuron in dasdasda)
-            {
-                Dot conv = convertToScreen(neuron);
-                graphics.FillEllipse(whiteBrush, new Rectangle(conv.X - size, conv.Y - size, 2 * size, 2 * size));
-            }
+            textBoxPrinting.AppendText(Math.Exp(-10 / 10.0).ToString());
         }
 
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            foreach (var point in points)
+            int N = 30;
+            double learningRate = 0.7;
+            double neighborhoodDistance = 6.1;
+            int epoch = 0;
+
+            while (learningRate > 0.01)
             {
-                Dot nearestNeuron = findNearestNeuron(neuronMatrix, point);
-                int newX = (int)(nearestNeuron.getX() + learningRate * (point.getX() - nearestNeuron.getX()));
-                int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
-                nearestNeuron.setX(newX);
-                nearestNeuron.setY(newY);
+                learningRate = 0.7 * Math.Exp((double)-epoch / N);
+                neighborhoodDistance = 6.1 * Math.Exp((double)-epoch / N);
 
-                graphics.Clear(Color.FromArgb(47, 47, 47));
-                drawNeightbourLines(neuronMatrix);
+                textBoxPrinting.AppendText("EPOCH : " + epoch + Environment.NewLine);
+                textBoxPrinting.AppendText("LEARNING RATE : " + learningRate + Environment.NewLine);
+                textBoxPrinting.AppendText("NEIGHBOURHOOD : " + neighborhoodDistance + Environment.NewLine);
+                textBoxPrinting.AppendText("====================" + Environment.NewLine);
+                textBoxPrinting.AppendText(Environment.NewLine);
 
-                List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, neighborhoodDistance);
+                foreach (var point in points)
+                {
+                    Dot nearestNeuron = findNearestNeuron(neuronMatrix, point);
+                    int newX = (int)(nearestNeuron.getX() + learningRate * (point.getX() - nearestNeuron.getX()));
+                    int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
+                    nearestNeuron.setX(newX);
+                    nearestNeuron.setY(newY);
+
+                    List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)neighborhoodDistance);
+                    foreach (var neighbour in neightbours)
+                    {
+                        neighbour.X = newX;
+                        neighbour.Y = newY;
+                    }
+                }
+
+                epoch++;
             }
+
+            graphics.Clear(Color.FromArgb(47, 47, 47));
+            drawAxis();
+            drawNeightbourLines(neuronMatrix);
+            drawPoints(points);
         }
 
         private Dot findNearestNeuron(Dot[,] neuronMatrix, Dot point)
@@ -129,9 +136,9 @@ namespace Kmeans2
             //    }
             //}
 
-            for (int i = -realGraphWidth / 2 + xStep / 2, lineCount = 0; i < realGraphWidth / 2; i += xStep, lineCount++)
+            for (int i = -realGraphWidth / 2 + xStep / 2, columnCount = 0; i < realGraphWidth / 2; i += xStep, columnCount++)
             {
-                for (int j = realGraphHeight / 2 - yStep / 2, columnCount = 0; j > -realGraphHeight / 2; j -= yStep, columnCount++)
+                for (int j = realGraphHeight / 2 - yStep / 2, lineCount = 0; j > -realGraphHeight / 2; j -= yStep, lineCount++)
                 {
                     output[lineCount, columnCount] = new Dot(i, j);
                 }
@@ -165,21 +172,28 @@ namespace Kmeans2
             int originX = origin.Item1;
             int originY = origin.Item2;
 
-            for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
+            if (neighbourhoodDistance == 0)
             {
-                for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
+                neightbours.Add(neuronMatrix[originX, originY]);
+            }
+            else
+            {
+                for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
                 {
-                    if (i >= 0 && i < neuronMatrixSize)
+                    for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
                     {
-                        if (j >= 0 && j < neuronMatrixSize)
+                        if (i >= 0 && i < neuronMatrixSize)
                         {
-                            if (neuronMatrix[i, j] != point)
+                            if (j >= 0 && j < neuronMatrixSize)
                             {
-                                neightbours.Add(neuronMatrix[i, j]);
+                                if (neuronMatrix[i, j] != point)
+                                {
+                                    neightbours.Add(neuronMatrix[i, j]);
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
             }
 
@@ -254,7 +268,7 @@ namespace Kmeans2
             }
         }
 
-        private void drawPoint(MyPoint point, int size)
+        private void drawPoint(Dot point, int size)
         {
             Dot converted = convertToScreen(point);
             Brush whiteBrush = new SolidBrush(Color.White);
