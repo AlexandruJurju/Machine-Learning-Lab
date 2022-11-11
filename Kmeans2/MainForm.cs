@@ -96,20 +96,20 @@ namespace Kmeans2
                     int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
                     nearestNeuron.setX(newX);
                     nearestNeuron.setY(newY);
-                    graphics.Clear(Color.FromArgb(47, 47, 47));
-                    drawAxis();
-                    drawNeightbourLines(neuronMatrix);
-                    Thread.Sleep(1000);
+                    //graphics.Clear(Color.FromArgb(47, 47, 47));
+                    //drawAxis();
+                    //drawNeightbourLines(neuronMatrix);
+                    //Thread.Sleep(1000);
 
                     List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)neighborhoodDistance);
                     foreach (var neighbour in neightbours)
                     {
                         neighbour.X = newX;
                         neighbour.Y = newY;
-                        graphics.Clear(Color.FromArgb(47, 47, 47));
-                        drawAxis();
-                        drawNeightbourLines(neuronMatrix);
-                        Thread.Sleep(1000);
+                        //graphics.Clear(Color.FromArgb(47, 47, 47));
+                        //drawAxis();
+                        //drawNeightbourLines(neuronMatrix);
+                        //Thread.Sleep(1000);
                     }
 
                 }
