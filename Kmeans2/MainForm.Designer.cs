@@ -33,13 +33,14 @@
             this.textBoxPrinting = new System.Windows.Forms.TextBox();
             this.buttonDrawNeurons = new System.Windows.Forms.Button();
             this.buttonSOMFullRun = new System.Windows.Forms.Button();
+            this.buttonDrawOutlines = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonStep
             // 
-            this.buttonStep.Location = new System.Drawing.Point(1339, 95);
+            this.buttonStep.Location = new System.Drawing.Point(1339, 88);
             this.buttonStep.Name = "buttonStep";
-            this.buttonStep.Size = new System.Drawing.Size(75, 23);
+            this.buttonStep.Size = new System.Drawing.Size(75, 41);
             this.buttonStep.TabIndex = 0;
             this.buttonStep.Text = "Step";
             this.buttonStep.UseVisualStyleBackColor = true;
@@ -47,9 +48,9 @@
             // 
             // buttonFullRun
             // 
-            this.buttonFullRun.Location = new System.Drawing.Point(1651, 95);
+            this.buttonFullRun.Location = new System.Drawing.Point(1450, 88);
             this.buttonFullRun.Name = "buttonFullRun";
-            this.buttonFullRun.Size = new System.Drawing.Size(75, 23);
+            this.buttonFullRun.Size = new System.Drawing.Size(75, 41);
             this.buttonFullRun.TabIndex = 1;
             this.buttonFullRun.Text = "Full Run";
             this.buttonFullRun.UseVisualStyleBackColor = true;
@@ -57,7 +58,7 @@
             // 
             // textBoxPrinting
             // 
-            this.textBoxPrinting.Location = new System.Drawing.Point(1339, 183);
+            this.textBoxPrinting.Location = new System.Drawing.Point(1339, 244);
             this.textBoxPrinting.Multiline = true;
             this.textBoxPrinting.Name = "textBoxPrinting";
             this.textBoxPrinting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -66,7 +67,7 @@
             // 
             // buttonDrawNeurons
             // 
-            this.buttonDrawNeurons.Location = new System.Drawing.Point(1339, 135);
+            this.buttonDrawNeurons.Location = new System.Drawing.Point(1339, 153);
             this.buttonDrawNeurons.Name = "buttonDrawNeurons";
             this.buttonDrawNeurons.Size = new System.Drawing.Size(75, 42);
             this.buttonDrawNeurons.TabIndex = 3;
@@ -76,7 +77,7 @@
             // 
             // buttonSOMFullRun
             // 
-            this.buttonSOMFullRun.Location = new System.Drawing.Point(1450, 135);
+            this.buttonSOMFullRun.Location = new System.Drawing.Point(1450, 153);
             this.buttonSOMFullRun.Name = "buttonSOMFullRun";
             this.buttonSOMFullRun.Size = new System.Drawing.Size(75, 42);
             this.buttonSOMFullRun.TabIndex = 4;
@@ -84,12 +85,23 @@
             this.buttonSOMFullRun.UseVisualStyleBackColor = true;
             this.buttonSOMFullRun.Click += new System.EventHandler(this.buttonSOMFullRun_Click);
             // 
+            // buttonDrawOutlines
+            // 
+            this.buttonDrawOutlines.Location = new System.Drawing.Point(1566, 88);
+            this.buttonDrawOutlines.Name = "buttonDrawOutlines";
+            this.buttonDrawOutlines.Size = new System.Drawing.Size(75, 41);
+            this.buttonDrawOutlines.TabIndex = 5;
+            this.buttonDrawOutlines.Text = "Draw Outlines";
+            this.buttonDrawOutlines.UseVisualStyleBackColor = true;
+            this.buttonDrawOutlines.Click += new System.EventHandler(this.buttonDrawOutlines_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AntiqueWhite;
             this.ClientSize = new System.Drawing.Size(1798, 711);
+            this.Controls.Add(this.buttonDrawOutlines);
             this.Controls.Add(this.buttonSOMFullRun);
             this.Controls.Add(this.buttonDrawNeurons);
             this.Controls.Add(this.textBoxPrinting);
@@ -110,5 +122,6 @@
         private TextBox textBoxPrinting;
         private Button buttonDrawNeurons;
         private Button buttonSOMFullRun;
+        private Button buttonDrawOutlines;
     }
 }

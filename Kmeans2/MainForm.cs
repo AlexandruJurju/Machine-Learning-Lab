@@ -24,7 +24,7 @@ namespace Kmeans2
 
         List<Centroid> centroids = new List<Centroid>();
         int step = 0;
-        int radius = 5;
+        int radius = 4;
         int bigRadius = 8;
         List<Color> colorList = new List<Color>();
         Dictionary<Color, SolidBrush> brushDictionary = new Dictionary<Color, SolidBrush>();
@@ -118,9 +118,10 @@ namespace Kmeans2
             }
 
             graphics.Clear(Color.FromArgb(47, 47, 47));
+            drawPoints(points);
             drawAxis();
             drawNeightbourLines(neuronMatrix);
-            drawPoints(points);
+
         }
 
         private Dot findNearestNeuron(Dot[,] neuronMatrix, Dot point)
@@ -304,6 +305,108 @@ namespace Kmeans2
 
 
         // Centroids
+
+        private void buttonStep_MouseClick(object sender, MouseEventArgs e)
+        {
+            switch (step)
+            {
+                case 0:
+                    graphics.Clear(Color.FromArgb(47, 47, 47));
+                    drawAxis();
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids(centroids);
+                    drawCentroids(centroids);
+                    step = 1;
+                    break;
+                case 1:
+                    graphics.Clear(Color.FromArgb(47, 47, 47));
+                    drawAxis();
+                    foreach (var centroid in centroids)
+                    {
+                        Dot centerOfGravity = calculateCenterOfGravity(centroid);
+                        centroid.setX(centerOfGravity.getX());
+                        centroid.setY(centerOfGravity.getY());
+                    }
+                    groupPoints(points, centroids);
+                    drawPointsFromCentroids(centroids);
+                    drawCentroids(centroids);
+                    step = 2;
+                    break;
+                case 2:
+                    graphics.Clear(Color.FromArgb(47, 47, 47));
+                    drawOutline(centroids);
+                    drawAxis();
+                    step = 0;
+                    break;
+            }
+        }
+        private void buttonFullRun_MouseClick(object sender, MouseEventArgs e)
+        {
+            bool running = true;
+            while (running)
+            {
+                arrangeCentroids(centroids);
+
+                running = keepRunning();
+                if (running)
+                {
+                    centroids = generateCentroids();
+                }
+            }
+
+
+            List<Centroid> auxCentroids = new List<Centroid>();
+            foreach (var centroid in centroids)
+            {
+                auxCentroids.Add(centroid);
+            }
+
+            List<Tuple<Centroid, Centroid>> tooCloseList = getCentroidsTooClose();
+
+            if (tooCloseList.Count() > 0)
+            {
+
+                foreach (var centroidPair in tooCloseList)
+                {
+                    textBoxPrinting.AppendText(centroidPair.Item1.ToString() + " " + centroidPair.Item2.ToString());
+                    textBoxPrinting.AppendText(Environment.NewLine);
+                }
+
+                foreach (var centroidPair in tooCloseList)
+                {
+                    auxCentroids.RemoveAll(centroid => centroid.getColor() == centroidPair.Item1.getColor());
+                }
+
+                arrangeCentroids(auxCentroids);
+                foreach (var centroid in auxCentroids)
+                {
+                    textBoxPrinting.AppendText(centroid.ToString());
+                    textBoxPrinting.AppendText(Environment.NewLine);
+                }
+                Thread.Sleep(1000);
+            }
+
+
+            List<Centroid> noiseCentroids = auxCentroids.FindAll(c => c.getPointArrayList().Count < 10000 / 100);
+            foreach (var centroid in noiseCentroids)
+            {
+                foreach (var point in centroid.getPointArrayList())
+                {
+                    points.Remove(point);
+                }
+            }
+            auxCentroids.RemoveAll(c => c.getPointArrayList().Count < 10000 / 100);
+            arrangeCentroids(auxCentroids);
+            centroids = auxCentroids;
+
+            textBoxPrinting.AppendText("DONE");
+
+        }
+        private void buttonDrawOutlines_Click(object sender, EventArgs e)
+        {
+            drawOutline(centroids);
+        }
+
         private void drawAxis()
         {
             Pen whitePen = new Pen(Color.White, 1);
@@ -475,7 +578,6 @@ namespace Kmeans2
             return Ec;
         }
 
-
         private void drawPoints(List<MyPoint> points)
         {
             Brush whiteBrush = new SolidBrush(Color.White);
@@ -518,9 +620,9 @@ namespace Kmeans2
 
         private void drawOutline(List<Centroid> centroidList)
         {
-            for (int x = -300; x < 300; x += 7)
+            for (int x = -300; x < 300; x += 4)
             {
-                for (int y = -300; y < 300; y += 7)
+                for (int y = -300; y < 300; y += 4)
                 {
                     double minDist = 1000000;
                     Centroid bestCentroid = null;
@@ -558,41 +660,6 @@ namespace Kmeans2
             return minimDistance;
         }
 
-        private void buttonStep_MouseClick(object sender, MouseEventArgs e)
-        {
-            switch (step)
-            {
-                case 0:
-                    graphics.Clear(Color.FromArgb(47, 47, 47));
-                    drawAxis();
-                    groupPoints(points, centroids);
-                    drawPointsFromCentroids(centroids);
-                    drawCentroids(centroids);
-                    step = 1;
-                    break;
-                case 1:
-                    graphics.Clear(Color.FromArgb(47, 47, 47));
-                    drawAxis();
-                    foreach (var centroid in centroids)
-                    {
-                        Dot centerOfGravity = calculateCenterOfGravity(centroid);
-                        centroid.setX(centerOfGravity.getX());
-                        centroid.setY(centerOfGravity.getY());
-                    }
-                    groupPoints(points, centroids);
-                    drawPointsFromCentroids(centroids);
-                    drawCentroids(centroids);
-                    step = 2;
-                    break;
-                case 2:
-                    graphics.Clear(Color.FromArgb(47, 47, 47));
-                    drawOutline(centroids);
-                    drawAxis();
-                    step = 0;
-                    break;
-            }
-        }
-
         private bool keepRunning()
         {
             foreach (var centroid in centroids)
@@ -606,60 +673,6 @@ namespace Kmeans2
                 }
             }
             return false;
-        }
-
-        private void buttonFullRun_MouseClick(object sender, MouseEventArgs e)
-        {
-            bool running = true;
-            while (running)
-            {
-                arrangeCentroids(centroids);
-
-                running = keepRunning();
-                if (running)
-                {
-                    centroids = generateCentroids();
-                }
-            }
-
-
-            List<Centroid> auxCentroids = new List<Centroid>();
-            foreach (var centroid in centroids)
-            {
-                auxCentroids.Add(centroid);
-            }
-
-            List<Tuple<Centroid, Centroid>> tooCloseList = getCentroidsTooClose();
-
-            if (tooCloseList.Count() > 0)
-            {
-
-                foreach (var centroidPair in tooCloseList)
-                {
-                    textBoxPrinting.AppendText(centroidPair.Item1.ToString() + " " + centroidPair.Item2.ToString());
-                    textBoxPrinting.AppendText(Environment.NewLine);
-                }
-
-                foreach (var centroidPair in tooCloseList)
-                {
-                    auxCentroids.RemoveAll(centroid => centroid.getColor() == centroidPair.Item1.getColor());
-                }
-
-                arrangeCentroids(auxCentroids);
-                foreach (var centroid in auxCentroids)
-                {
-                    textBoxPrinting.AppendText(centroid.ToString());
-                    textBoxPrinting.AppendText(Environment.NewLine);
-                }
-                Thread.Sleep(1000);
-            }
-
-
-            auxCentroids.RemoveAll(c => c.getPointArrayList().Count < 10000 / 100);
-            arrangeCentroids(auxCentroids);
-
-            textBoxPrinting.AppendText("DONE");
-
         }
 
         private bool areCentroidsTooClose(Centroid centroid1, Centroid centroid2)
