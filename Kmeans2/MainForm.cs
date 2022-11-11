@@ -58,12 +58,22 @@ namespace Kmeans2
             //drawNeightbourLines(neuronMatrix);
             //drawAxis();
 
+            neuronMatrix[3, 2].setX(100);
+            drawNeightbourLines(neuronMatrix);
+            drawAxis();
+
+            List<Dot> neightbours = findNeighbours(neuronMatrix, neuronMatrix[3, 3], 1);
+            foreach (var neightbour in neightbours)
+            {
+                drawPoint(neightbour, 4);
+            }
+
             textBoxPrinting.AppendText(Math.Exp(-10 / 10.0).ToString());
         }
 
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            int N = 30;
+            int N = 50;
             double learningRate = 0.7;
             double neighborhoodDistance = 6.1;
             int epoch = 0;
@@ -73,7 +83,7 @@ namespace Kmeans2
                 learningRate = 0.7 * Math.Exp((double)-epoch / N);
                 neighborhoodDistance = 6.1 * Math.Exp((double)-epoch / N);
 
-                textBoxPrinting.AppendText("EPOCH : " + epoch + Environment.NewLine);
+                textBoxPrinting.Text = ("EPOCH : " + epoch + Environment.NewLine);
                 textBoxPrinting.AppendText("LEARNING RATE : " + learningRate + Environment.NewLine);
                 textBoxPrinting.AppendText("NEIGHBOURHOOD : " + neighborhoodDistance + Environment.NewLine);
                 textBoxPrinting.AppendText("====================" + Environment.NewLine);
@@ -86,13 +96,22 @@ namespace Kmeans2
                     int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
                     nearestNeuron.setX(newX);
                     nearestNeuron.setY(newY);
+                    graphics.Clear(Color.FromArgb(47, 47, 47));
+                    drawAxis();
+                    drawNeightbourLines(neuronMatrix);
+                    Thread.Sleep(1000);
 
                     List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)neighborhoodDistance);
                     foreach (var neighbour in neightbours)
                     {
                         neighbour.X = newX;
                         neighbour.Y = newY;
+                        graphics.Clear(Color.FromArgb(47, 47, 47));
+                        drawAxis();
+                        drawNeightbourLines(neuronMatrix);
+                        Thread.Sleep(1000);
                     }
+
                 }
 
                 epoch++;
@@ -358,7 +377,7 @@ namespace Kmeans2
         {
             List<MyPoint> readPoints = new List<MyPoint>();
 
-            var lines = File.ReadLines(@"X:\Projects\Visual Studio\Kmeans2\points.txt");
+            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
 
             foreach (var line in lines)
             {
