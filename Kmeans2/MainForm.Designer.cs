@@ -38,36 +38,39 @@
             // 
             // buttonStep
             // 
-            this.buttonStep.Location = new System.Drawing.Point(1339, 88);
+            this.buttonStep.Location = new System.Drawing.Point(756, 94);
             this.buttonStep.Name = "buttonStep";
             this.buttonStep.Size = new System.Drawing.Size(75, 41);
             this.buttonStep.TabIndex = 0;
             this.buttonStep.Text = "Step";
             this.buttonStep.UseVisualStyleBackColor = true;
+            this.buttonStep.Click += new System.EventHandler(this.buttonStep_Click);
             this.buttonStep.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonStep_MouseClick);
             // 
             // buttonFullRun
             // 
-            this.buttonFullRun.Location = new System.Drawing.Point(1450, 88);
+            this.buttonFullRun.Location = new System.Drawing.Point(867, 94);
             this.buttonFullRun.Name = "buttonFullRun";
             this.buttonFullRun.Size = new System.Drawing.Size(75, 41);
             this.buttonFullRun.TabIndex = 1;
             this.buttonFullRun.Text = "Full Run";
             this.buttonFullRun.UseVisualStyleBackColor = true;
+            this.buttonFullRun.Click += new System.EventHandler(this.buttonFullRun_Click);
             this.buttonFullRun.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonFullRun_MouseClick);
             // 
             // textBoxPrinting
             // 
-            this.textBoxPrinting.Location = new System.Drawing.Point(1339, 244);
+            this.textBoxPrinting.Location = new System.Drawing.Point(756, 250);
             this.textBoxPrinting.Multiline = true;
             this.textBoxPrinting.Name = "textBoxPrinting";
             this.textBoxPrinting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPrinting.Size = new System.Drawing.Size(412, 402);
             this.textBoxPrinting.TabIndex = 2;
+            this.textBoxPrinting.TextChanged += new System.EventHandler(this.textBoxPrinting_TextChanged);
             // 
             // buttonDrawNeurons
             // 
-            this.buttonDrawNeurons.Location = new System.Drawing.Point(1339, 153);
+            this.buttonDrawNeurons.Location = new System.Drawing.Point(756, 159);
             this.buttonDrawNeurons.Name = "buttonDrawNeurons";
             this.buttonDrawNeurons.Size = new System.Drawing.Size(75, 42);
             this.buttonDrawNeurons.TabIndex = 3;
@@ -77,7 +80,7 @@
             // 
             // buttonSOMFullRun
             // 
-            this.buttonSOMFullRun.Location = new System.Drawing.Point(1450, 153);
+            this.buttonSOMFullRun.Location = new System.Drawing.Point(867, 159);
             this.buttonSOMFullRun.Name = "buttonSOMFullRun";
             this.buttonSOMFullRun.Size = new System.Drawing.Size(75, 42);
             this.buttonSOMFullRun.TabIndex = 4;
@@ -87,7 +90,7 @@
             // 
             // buttonDrawOutlines
             // 
-            this.buttonDrawOutlines.Location = new System.Drawing.Point(1566, 88);
+            this.buttonDrawOutlines.Location = new System.Drawing.Point(983, 94);
             this.buttonDrawOutlines.Name = "buttonDrawOutlines";
             this.buttonDrawOutlines.Size = new System.Drawing.Size(75, 41);
             this.buttonDrawOutlines.TabIndex = 5;
@@ -100,7 +103,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AntiqueWhite;
-            this.ClientSize = new System.Drawing.Size(1798, 711);
+            this.ClientSize = new System.Drawing.Size(1186, 711);
             this.Controls.Add(this.buttonDrawOutlines);
             this.Controls.Add(this.buttonSOMFullRun);
             this.Controls.Add(this.buttonDrawNeurons);

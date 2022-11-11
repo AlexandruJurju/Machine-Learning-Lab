@@ -39,7 +39,7 @@ namespace Kmeans2
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            this.WindowState = FormWindowState.Maximized;
+            //this.WindowState = FormWindowState.Maximized;
             this.graphics = this.CreateGraphics();
             this.BackColor = Color.FromArgb(47, 47, 47);
             initColors();
@@ -50,7 +50,6 @@ namespace Kmeans2
             neuronMatrix = initNeuronPositions(neuronMatrixSize);
         }
 
-
         // SOM
         private void buttonDrawNeurons_Click(object sender, EventArgs e)
         {
@@ -58,62 +57,62 @@ namespace Kmeans2
             //drawNeightbourLines(neuronMatrix);
             //drawAxis();
 
-            neuronMatrix[3, 2].setX(100);
-            drawNeightbourLines(neuronMatrix);
             drawAxis();
 
-            List<Dot> neightbours = findNeighbours(neuronMatrix, neuronMatrix[3, 3], 1);
-            foreach (var neightbour in neightbours)
+            Dot center = neuronMatrix[3, 3];
+
+            List<Dot> neightbours = findNeighbours(neuronMatrix, center, 0);
+            foreach (var neightbor in neightbours)
             {
-                drawPoint(neightbour, 4);
+                drawPoint(neightbor, 4);
             }
 
-            textBoxPrinting.AppendText(Math.Exp(-10 / 10.0).ToString());
-        }
 
+            foreach (var neightbor in neightbours)
+            {
+                neightbor.X = center.X;
+                neightbor.Y = center.Y;
+                drawPoint(neightbor, 4);
+            }
+
+            drawNeightbourLines(neuronMatrix);
+        }
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            int N = 50;
-            double learningRate = 0.7;
+            int N = 100;
+            double learningRate = 0.6;
             double neighborhoodDistance = 6.1;
             int epoch = 0;
 
             while (learningRate > 0.01)
             {
-                learningRate = 0.7 * Math.Exp((double)-epoch / N);
+                learningRate = 0.6 * Math.Exp((double)-epoch / N);
                 neighborhoodDistance = 6.1 * Math.Exp((double)-epoch / N);
 
                 textBoxPrinting.Text = ("EPOCH : " + epoch + Environment.NewLine);
                 textBoxPrinting.AppendText("LEARNING RATE : " + learningRate + Environment.NewLine);
-                textBoxPrinting.AppendText("NEIGHBOURHOOD : " + neighborhoodDistance + Environment.NewLine);
+                textBoxPrinting.AppendText("NEIGHBOURHOOD : " + (int)Math.Round(neighborhoodDistance) + Environment.NewLine);
                 textBoxPrinting.AppendText("====================" + Environment.NewLine);
                 textBoxPrinting.AppendText(Environment.NewLine);
 
                 foreach (var point in points)
                 {
                     Dot nearestNeuron = findNearestNeuron(neuronMatrix, point);
-                    int newX = (int)(nearestNeuron.getX() + learningRate * (point.getX() - nearestNeuron.getX()));
-                    int newY = (int)(nearestNeuron.getY() + learningRate * (point.getY() - nearestNeuron.getY()));
-                    nearestNeuron.setX(newX);
-                    nearestNeuron.setY(newY);
-                    //graphics.Clear(Color.FromArgb(47, 47, 47));
-                    //drawAxis();
-                    //drawNeightbourLines(neuronMatrix);
-                    //Thread.Sleep(1000);
+                    int newX = (int)(nearestNeuron.X + learningRate * (point.X - nearestNeuron.X));
+                    int newY = (int)(nearestNeuron.Y + learningRate * (point.Y - nearestNeuron.Y));
+                    nearestNeuron.X = (newX);
+                    nearestNeuron.Y = (newY);
 
-                    List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)neighborhoodDistance);
-                    foreach (var neighbour in neightbours)
+                    List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)Math.Round(neighborhoodDistance));
+                    if (neightbours.Count > 0)
                     {
-                        neighbour.X = newX;
-                        neighbour.Y = newY;
-                        //graphics.Clear(Color.FromArgb(47, 47, 47));
-                        //drawAxis();
-                        //drawNeightbourLines(neuronMatrix);
-                        //Thread.Sleep(1000);
+                        foreach (var neighbour in neightbours)
+                        {
+                            neighbour.X = newX;
+                            neighbour.Y = newY;
+                        }
                     }
-
                 }
-
                 epoch++;
             }
 
@@ -122,25 +121,30 @@ namespace Kmeans2
             drawAxis();
             drawNeightbourLines(neuronMatrix);
 
-        }
 
+        }
         private Dot findNearestNeuron(Dot[,] neuronMatrix, Dot point)
         {
-            double minDistance = 100000000;
+            double minDistance = 1000000;
             Dot nearest = null;
-            foreach (var neuron in neuronMatrix)
+
+            for (int i = 0; i < neuronMatrixSize; i++)
             {
-                double currentDistance = distance(point, neuron);
-                if (currentDistance < minDistance)
+                for (int j = 0; j < neuronMatrixSize; j++)
                 {
-                    minDistance = currentDistance;
-                    nearest = neuron;
+                    Dot currentNeuron = neuronMatrix[i, j];
+                    double currentDistance = euclidianDistance(point, currentNeuron);
+
+                    if (currentDistance < minDistance)
+                    {
+                        minDistance = currentDistance;
+                        nearest = currentNeuron;
+                    }
                 }
             }
 
             return nearest;
         }
-
         private Dot[,] initNeuronPositions(int neuronMatrixSize)
         {
             Dot[,] output = new Dot[neuronMatrixSize, neuronMatrixSize];
@@ -166,7 +170,6 @@ namespace Kmeans2
 
             return output;
         }
-
         public Tuple<int, int> CoordinatesOf(Dot[,] neuronMatrix, Dot point)
         {
             int w = neuronMatrix.GetLength(0); // width
@@ -183,7 +186,6 @@ namespace Kmeans2
 
             return Tuple.Create(-1, -1);
         }
-
         private List<Dot> findNeighbours(Dot[,] neuronMatrix, Dot point, int neighbourhoodDistance)
         {
             List<Dot> neightbours = new List<Dot>();
@@ -192,34 +194,28 @@ namespace Kmeans2
             int originX = origin.Item1;
             int originY = origin.Item2;
 
-            if (neighbourhoodDistance == 0)
+
+            for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
             {
-                neightbours.Add(neuronMatrix[originX, originY]);
-            }
-            else
-            {
-                for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
+                for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
                 {
-                    for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
+                    if (i >= 0 && i < neuronMatrixSize)
                     {
-                        if (i >= 0 && i < neuronMatrixSize)
+                        if (j >= 0 && j < neuronMatrixSize)
                         {
-                            if (j >= 0 && j < neuronMatrixSize)
+                            if (neuronMatrix[i, j] != point)
                             {
-                                if (neuronMatrix[i, j] != point)
-                                {
-                                    neightbours.Add(neuronMatrix[i, j]);
-                                }
+                                neightbours.Add(neuronMatrix[i, j]);
                             }
                         }
-
                     }
+
                 }
+
             }
 
             return neightbours;
         }
-
         private void drawNeurons(Dot[,] neuroMatrix)
         {
             SolidBrush blackBrush = new SolidBrush(Color.White);
@@ -234,7 +230,6 @@ namespace Kmeans2
                 }
             }
         }
-
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
             Pen whitePen = new Pen(Color.Black, 2);
@@ -287,14 +282,12 @@ namespace Kmeans2
                 }
             }
         }
-
         private void drawPoint(Dot point, int size)
         {
             Dot converted = convertToScreen(point);
             Brush whiteBrush = new SolidBrush(Color.White);
             graphics.FillEllipse(whiteBrush, new Rectangle(converted.X - size, converted.Y - size, 2 * size, 2 * size));
         }
-
         private Dot convertToScreen(Dot input)
         {
             int screenX = input.X + screenGraphWidth / 2 + xOffset;
@@ -303,9 +296,100 @@ namespace Kmeans2
             return new Dot(screenX, screenY);
         }
 
+        // General
+        private void drawAxis()
+        {
+            Pen whitePen = new Pen(Color.White, 1);
+
+            int x1 = xOffset - overflow;
+            int y1 = screenGraphHeight / 2 + yOffset;
+            int x2 = screenGraphWidth + xOffset + overflow;
+            int y2 = screenGraphHeight / 2 + yOffset;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+
+            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
+            y1 = yOffset - overflow;
+            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
+            y2 = screenGraphHeight + yOffset + overflow;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+
+            int xLimit = 300 + screenGraphWidth / 2;
+            int yLimit = screenGraphHeight / 2 - 300;
+
+            //top
+            x1 = (xLimit - 600 + xOffset);
+            y1 = yLimit + yOffset;
+            x2 = (xLimit + xOffset);
+            y2 = yLimit + yOffset;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // bottom
+            x1 = (xLimit - 600 + xOffset);
+            y1 = yLimit + 600 + yOffset;
+            x2 = xLimit + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // left
+            x1 = xLimit - 600 + xOffset;
+            y1 = yLimit + yOffset;
+            x2 = xLimit - 600 + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+
+            // right
+            x1 = xLimit + xOffset;
+            y1 = yLimit + yOffset;
+            x2 = xLimit + xOffset;
+            y2 = yLimit + yOffset + 600;
+            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+        }
+        private void initColors()
+        {
+            colorList.Add(Color.Blue);
+            colorList.Add(Color.SteelBlue);
+            colorList.Add(Color.Cyan);
+            colorList.Add(Color.MediumSpringGreen);
+            colorList.Add(Color.Sienna);
+            colorList.Add(Color.Red);
+            colorList.Add(Color.HotPink);
+            colorList.Add(Color.Lime);
+            colorList.Add(Color.Purple);
+
+            foreach (var color in colorList)
+            {
+                SolidBrush brush = new SolidBrush(color);
+                brushDictionary.Add(color, brush);
+            }
+        }
+        private List<MyPoint> readPointsFromFile()
+        {
+            List<MyPoint> readPoints = new List<MyPoint>();
+
+            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
+
+            foreach (var line in lines)
+            {
+                string[] split = line.Split(" ");
+                readPoints.Add(new MyPoint(Int16.Parse(split[0]), Int16.Parse(split[1]), Int16.Parse(split[2])));
+            }
+
+            return readPoints;
+        }
+        private double euclidianDistance(Dot point1, Dot point2)
+        {
+            int dX = point2.getX() - point1.getX();
+            int dY = point2.getY() - point1.getY();
+            return Math.Sqrt(dX * dX + dY * dY);
+        }
+        private double manhattanDistance(Dot point1, Dot point2)
+        {
+            return Math.Abs(point1.X - point2.X) + Math.Abs(point1.Y - point2.Y);
+        }
 
         // Centroids
-
         private void buttonStep_MouseClick(object sender, MouseEventArgs e)
         {
             switch (step)
@@ -406,91 +490,6 @@ namespace Kmeans2
         {
             drawOutline(centroids);
         }
-
-        private void drawAxis()
-        {
-            Pen whitePen = new Pen(Color.White, 1);
-
-            int x1 = xOffset - overflow;
-            int y1 = screenGraphHeight / 2 + yOffset;
-            int x2 = screenGraphWidth + xOffset + overflow;
-            int y2 = screenGraphHeight / 2 + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-
-            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y1 = yOffset - overflow;
-            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y2 = screenGraphHeight + yOffset + overflow;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-
-            int xLimit = 300 + screenGraphWidth / 2;
-            int yLimit = screenGraphHeight / 2 - 300;
-
-            //top
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + yOffset;
-            x2 = (xLimit + xOffset);
-            y2 = yLimit + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // bottom
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + 600 + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // left
-            x1 = xLimit - 600 + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit - 600 + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-            // right
-            x1 = xLimit + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-        }
-
-        private void initColors()
-        {
-            colorList.Add(Color.Blue);
-            colorList.Add(Color.SteelBlue);
-            colorList.Add(Color.Cyan);
-            colorList.Add(Color.MediumSpringGreen);
-            colorList.Add(Color.Sienna);
-            colorList.Add(Color.Red);
-            colorList.Add(Color.HotPink);
-            colorList.Add(Color.Lime);
-            colorList.Add(Color.Purple);
-
-            foreach (var color in colorList)
-            {
-                SolidBrush brush = new SolidBrush(color);
-                brushDictionary.Add(color, brush);
-            }
-        }
-
-        private List<MyPoint> readPointsFromFile()
-        {
-            List<MyPoint> readPoints = new List<MyPoint>();
-
-            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
-
-            foreach (var line in lines)
-            {
-                string[] split = line.Split(" ");
-                readPoints.Add(new MyPoint(Int16.Parse(split[0]), Int16.Parse(split[1]), Int16.Parse(split[2])));
-            }
-
-            return readPoints;
-        }
-
         private List<Centroid> generateCentroids()
         {
             List<Centroid> centroidList = new List<Centroid>();
@@ -503,14 +502,6 @@ namespace Kmeans2
             }
             return centroidList;
         }
-
-        private double distance(Dot point1, Dot point2)
-        {
-            int dX = point2.getX() - point1.getX();
-            int dY = point2.getY() - point1.getY();
-            return Math.Sqrt(dX * dX + dY * dY);
-        }
-
         private Centroid findCentroidWithMinimialDistance(List<Centroid> centroidList, MyPoint point)
         {
             double minDistance = 1000000;
@@ -518,7 +509,7 @@ namespace Kmeans2
 
             foreach (Centroid centroid in centroidList)
             {
-                double dist = distance(point, centroid);
+                double dist = euclidianDistance(point, centroid);
                 if (dist < minDistance)
                 {
                     minDistance = dist;
@@ -527,7 +518,6 @@ namespace Kmeans2
             }
             return bestCentroid;
         }
-
         private void groupPoints(List<MyPoint> pointArrayList, List<Centroid> centroidArrayList)
         {
             foreach (Centroid centroid in centroidArrayList)
@@ -541,7 +531,6 @@ namespace Kmeans2
                 bestCentroid.getPointArrayList().Add(point);
             }
         }
-
         private Dot calculateCenterOfGravity(Centroid centroid)
         {
             int xSum = 0;
@@ -563,7 +552,6 @@ namespace Kmeans2
                 return new Dot(centroid.getX(), centroid.getY());
             }
         }
-
         private double calculateCostForAllCentroids(List<Centroid> centroidArrayList)
         {
             double Ec = 0;
@@ -572,12 +560,11 @@ namespace Kmeans2
             {
                 foreach (MyPoint point in centroid.getPointArrayList())
                 {
-                    Ec += distance(point, centroid);
+                    Ec += euclidianDistance(point, centroid);
                 }
             }
             return Ec;
         }
-
         private void drawPoints(List<MyPoint> points)
         {
             Brush whiteBrush = new SolidBrush(Color.White);
@@ -588,7 +575,6 @@ namespace Kmeans2
                 graphics.FillEllipse(whiteBrush, new Rectangle(converted.X, converted.Y, 2, 2));
             }
         }
-
         private void drawPointsFromCentroids(List<Centroid> centroidList)
         {
             foreach (var centroid in centroidList)
@@ -602,7 +588,6 @@ namespace Kmeans2
                 }
             }
         }
-
         private void drawCentroids(List<Centroid> centroidList)
         {
             SolidBrush blackBrush = new SolidBrush(Color.White);
@@ -617,7 +602,6 @@ namespace Kmeans2
                 graphics.FillEllipse(brushDictionary[centroid.getColor()], new Rectangle(screenX - radius, screenY - radius, 2 * radius, 2 * radius));
             }
         }
-
         private void drawOutline(List<Centroid> centroidList)
         {
             for (int x = -300; x < 300; x += 4)
@@ -629,7 +613,7 @@ namespace Kmeans2
 
                     foreach (Centroid centroid in centroidList)
                     {
-                        double dist = distance(new Dot(x, y), centroid);
+                        double dist = euclidianDistance(new Dot(x, y), centroid);
                         if (dist < minDist)
                         {
                             minDist = dist;
@@ -645,13 +629,12 @@ namespace Kmeans2
                 }
             }
         }
-
         private double findMinimalDistanceOfCentroid(Centroid centroid)
         {
             double minimDistance = 1000000000;
             foreach (var point in centroid.getPointArrayList())
             {
-                double currentDistance = distance(point, centroid);
+                double currentDistance = euclidianDistance(point, centroid);
                 if (currentDistance < minimDistance)
                 {
                     minimDistance = currentDistance;
@@ -659,7 +642,6 @@ namespace Kmeans2
             }
             return minimDistance;
         }
-
         private bool keepRunning()
         {
             foreach (var centroid in centroids)
@@ -674,7 +656,6 @@ namespace Kmeans2
             }
             return false;
         }
-
         private bool areCentroidsTooClose(Centroid centroid1, Centroid centroid2)
         {
             if (centroid1 == centroid2)
@@ -686,7 +667,7 @@ namespace Kmeans2
             {
                 foreach (var point2 in centroid2.getPointArrayList())
                 {
-                    if (distance(point1, point2) <= 2.0)
+                    if (euclidianDistance(point1, point2) <= 2.0)
                     {
                         //textBoxCost.AppendText(point1.getX() + " " + point1.getY() + " : " + point2.getX() + " " + point2.getY() + " ");
                         //textBoxCost.AppendText(Environment.NewLine);
@@ -700,7 +681,6 @@ namespace Kmeans2
             }
             return false;
         }
-
         private List<Tuple<Centroid, Centroid>> getCentroidsTooClose()
         {
             List<Tuple<Centroid, Centroid>> tooClose = new List<Tuple<Centroid, Centroid>>();
@@ -729,7 +709,6 @@ namespace Kmeans2
 
             return tooClose;
         }
-
         private void arrangeCentroids(List<Centroid> centroidList)
         {
             double previousCost = -1;
@@ -767,7 +746,6 @@ namespace Kmeans2
 
             writeFinalCentroidDistances(centroidList);
         }
-
         private void writeFinalCentroidDistances(List<Centroid> centroidList)
         {
             textBoxPrinting.AppendText(Environment.NewLine);
@@ -785,6 +763,19 @@ namespace Kmeans2
             textBoxPrinting.AppendText(Environment.NewLine);
         }
 
+        private void textBoxPrinting_TextChanged(object sender, EventArgs e)
+        {
 
+        }
+
+        private void buttonStep_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonFullRun_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
