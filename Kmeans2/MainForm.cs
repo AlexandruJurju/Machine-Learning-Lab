@@ -60,39 +60,40 @@ namespace Kmeans2
             drawAxis();
 
             Dot center = neuronMatrix[3, 3];
+            center.setX(100);
+            center.setY(200);
 
-            List<Dot> neightbours = findNeighbours(neuronMatrix, center, 0);
-            foreach (var neightbor in neightbours)
-            {
-                drawPoint(neightbor, 4);
-            }
+            //List<Dot> neightbours = findNeighbours(neuronMatrix, center, 0);
+            //foreach (var neightbor in neightbours)
+            //{
+            //    drawPoint(neightbor, 4);
+            //}
 
 
-            foreach (var neightbor in neightbours)
-            {
-                neightbor.X = center.X;
-                neightbor.Y = center.Y;
-                drawPoint(neightbor, 4);
-            }
+            //foreach (var neightbor in neightbours)
+            //{
+            //    neightbor.X = center.X;
+            //    neightbor.Y = center.Y;
+            //    drawPoint(neightbor, 4);
+            //}
 
             drawNeightbourLines(neuronMatrix);
         }
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            int N = 100;
+            double N = 10;
             double learningRate = 0.6;
             double neighborhoodDistance = 6.1;
             int epoch = 0;
 
-            while (learningRate > 0.01)
+            while (learningRate > 0.001)
             {
-                learningRate = 0.6 * Math.Exp((double)-epoch / N);
-                neighborhoodDistance = 6.1 * Math.Exp((double)-epoch / N);
+                learningRate = 0.6 * Math.Exp(-epoch / N);
+                neighborhoodDistance = 6.1 * Math.Exp(-epoch / N);
 
                 textBoxPrinting.Text = ("EPOCH : " + epoch + Environment.NewLine);
                 textBoxPrinting.AppendText("LEARNING RATE : " + learningRate + Environment.NewLine);
                 textBoxPrinting.AppendText("NEIGHBOURHOOD : " + (int)Math.Round(neighborhoodDistance) + Environment.NewLine);
-                textBoxPrinting.AppendText("====================" + Environment.NewLine);
                 textBoxPrinting.AppendText(Environment.NewLine);
 
                 foreach (var point in points)
@@ -108,6 +109,8 @@ namespace Kmeans2
                     {
                         foreach (var neighbour in neightbours)
                         {
+                            newX = (int)(neighbour.X + learningRate * (point.X - neighbour.X));
+                            newY = (int)(neighbour.Y + learningRate * (point.Y - neighbour.Y));
                             neighbour.X = newX;
                             neighbour.Y = newY;
                         }
