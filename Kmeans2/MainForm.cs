@@ -765,20 +765,5 @@ namespace Kmeans2
             textBoxPrinting.AppendText(Environment.NewLine);
             textBoxPrinting.AppendText(Environment.NewLine);
         }
-
-        private void textBoxPrinting_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonStep_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonFullRun_Click(object sender, EventArgs e)
-        {
-
-        }
     }
 }

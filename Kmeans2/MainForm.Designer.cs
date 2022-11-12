@@ -44,7 +44,6 @@
             this.buttonStep.TabIndex = 0;
             this.buttonStep.Text = "Step";
             this.buttonStep.UseVisualStyleBackColor = true;
-            this.buttonStep.Click += new System.EventHandler(this.buttonStep_Click);
             this.buttonStep.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonStep_MouseClick);
             // 
             // buttonFullRun
@@ -55,7 +54,6 @@
             this.buttonFullRun.TabIndex = 1;
             this.buttonFullRun.Text = "Full Run";
             this.buttonFullRun.UseVisualStyleBackColor = true;
-            this.buttonFullRun.Click += new System.EventHandler(this.buttonFullRun_Click);
             this.buttonFullRun.MouseClick += new System.Windows.Forms.MouseEventHandler(this.buttonFullRun_MouseClick);
             // 
             // textBoxPrinting
@@ -66,7 +64,6 @@
             this.textBoxPrinting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBoxPrinting.Size = new System.Drawing.Size(412, 402);
             this.textBoxPrinting.TabIndex = 2;
-            this.textBoxPrinting.TextChanged += new System.EventHandler(this.textBoxPrinting_TextChanged);
             // 
             // buttonDrawNeurons
             // 
