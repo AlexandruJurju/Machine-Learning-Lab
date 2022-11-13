@@ -136,7 +136,7 @@ namespace Kmeans2
                 for (int j = 0; j < neuronMatrixSize; j++)
                 {
                     Dot currentNeuron = neuronMatrix[i, j];
-                    double currentDistance = euclidianDistance(point, currentNeuron);
+                    double currentDistance = distance(point, currentNeuron);
 
                     if (currentDistance < minDistance)
                     {
@@ -381,6 +381,10 @@ namespace Kmeans2
 
             return readPoints;
         }
+        private double distance(Dot point1, Dot point2)
+        {
+            return euclidianDistance(point1, point2);
+        }
         private double euclidianDistance(Dot point1, Dot point2)
         {
             int dX = point2.getX() - point1.getX();
@@ -512,7 +516,7 @@ namespace Kmeans2
 
             foreach (Centroid centroid in centroidList)
             {
-                double dist = euclidianDistance(point, centroid);
+                double dist = distance(point, centroid);
                 if (dist < minDistance)
                 {
                     minDistance = dist;
@@ -563,7 +567,7 @@ namespace Kmeans2
             {
                 foreach (MyPoint point in centroid.getPointArrayList())
                 {
-                    Ec += euclidianDistance(point, centroid);
+                    Ec += distance(point, centroid);
                 }
             }
             return Ec;
@@ -616,7 +620,7 @@ namespace Kmeans2
 
                     foreach (Centroid centroid in centroidList)
                     {
-                        double dist = euclidianDistance(new Dot(x, y), centroid);
+                        double dist = distance(new Dot(x, y), centroid);
                         if (dist < minDist)
                         {
                             minDist = dist;
@@ -637,7 +641,7 @@ namespace Kmeans2
             double minimDistance = 1000000000;
             foreach (var point in centroid.getPointArrayList())
             {
-                double currentDistance = euclidianDistance(point, centroid);
+                double currentDistance = distance(point, centroid);
                 if (currentDistance < minimDistance)
                 {
                     minimDistance = currentDistance;
@@ -670,7 +674,7 @@ namespace Kmeans2
             {
                 foreach (var point2 in centroid2.getPointArrayList())
                 {
-                    if (euclidianDistance(point1, point2) <= 2.0)
+                    if (distance(point1, point2) <= 2.0)
                     {
                         //textBoxCost.AppendText(point1.getX() + " " + point1.getY() + " : " + point2.getX() + " " + point2.getY() + " ");
                         //textBoxCost.AppendText(Environment.NewLine);
