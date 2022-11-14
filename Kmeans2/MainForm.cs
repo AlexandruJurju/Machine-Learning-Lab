@@ -53,100 +53,85 @@ namespace Kmeans2
         // SOM
         private void buttonDrawNeurons_Click(object sender, EventArgs e)
         {
-            //drawPoints(points);
-            //drawNeightbourLines(neuronMatrix);
-            //drawAxis();
-
             drawAxis();
 
-            Dot center = neuronMatrix[3, 3];
-            center.setX(100);
-            center.setY(200);
+            neuronMatrix = initNeuronPositions(neuronMatrixSize);
 
-            //List<Dot> neightbours = findNeighbours(neuronMatrix, center, 0);
-            //foreach (var neightbor in neightbours)
-            //{
-            //    drawPoint(neightbor, 4);
-            //}
+            List<Dot> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
 
+            for (int i = 0; i < neuronMatrixSize; i++)
+            {
+                for (int j = 0; j < neuronMatrixSize; j++)
+                {
+                    drawNeuron(neuronMatrix[i, j], Color.Cyan);
+                }
+            }
 
-            //foreach (var neightbor in neightbours)
-            //{
-            //    neightbor.X = center.X;
-            //    neightbor.Y = center.Y;
-            //    drawPoint(neightbor, 4);
-            //}
+            foreach (var neigh in neighbors)
+            {
+                drawNeuron(neigh, Color.White);
+            }
 
-            drawNeightbourLines(neuronMatrix);
+            drawNeuron(neuronMatrix[3, 3], Color.Crimson);
         }
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            double N = 10;
-            double learningRate = 0.6;
-            double neighborhoodDistance = 6.1;
+            double learningRate = 0.7;
+            double neighbourhoodDistance = 6.1;
             int epoch = 0;
-
-            while (learningRate > 0.001)
+            double epochsLearning = 500.0;
+            while (learningRate > 0.1)
             {
-                learningRate = 0.6 * Math.Exp(-epoch / N);
-                neighborhoodDistance = 6.1 * Math.Exp(-epoch / N);
+                learningRate = 0.6 * Math.Exp(-epoch / epochsLearning);
+                neighbourhoodDistance = 6.1 * Math.Exp(-epoch / epochsLearning);
 
-                textBoxPrinting.Text = ("EPOCH : " + epoch + Environment.NewLine);
-                textBoxPrinting.AppendText("LEARNING RATE : " + learningRate + Environment.NewLine);
-                textBoxPrinting.AppendText("NEIGHBOURHOOD : " + (int)Math.Round(neighborhoodDistance) + Environment.NewLine);
-                textBoxPrinting.AppendText(Environment.NewLine);
+                textBoxPrinting.Text = "Epoch " + epoch + Environment.NewLine;
+                textBoxPrinting.AppendText("Learning Rate : " + learningRate + Environment.NewLine);
+                textBoxPrinting.AppendText("Distance : " + (int)Math.Round(neighbourhoodDistance) + Environment.NewLine);
 
                 foreach (var point in points)
                 {
-                    Dot nearestNeuron = findNearestNeuron(neuronMatrix, point);
-                    int newX = (int)(nearestNeuron.X + learningRate * (point.X - nearestNeuron.X));
-                    int newY = (int)(nearestNeuron.Y + learningRate * (point.Y - nearestNeuron.Y));
-                    nearestNeuron.X = (newX);
-                    nearestNeuron.Y = (newY);
+                    Dot closest = findClosestNeuron(neuronMatrix, point);
 
-                    List<Dot> neightbours = findNeighbours(neuronMatrix, nearestNeuron, (int)Math.Round(neighborhoodDistance));
-                    if (neightbours.Count > 0)
+                    int newX = (int)(closest.X + learningRate * (point.X - closest.X));
+                    int newY = (int)(closest.Y + learningRate * (point.Y - closest.Y));
+
+
+                    List<Dot> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
+
+                    foreach (var neighbor in neighbors)
                     {
-                        foreach (var neighbour in neightbours)
-                        {
-                            newX = (int)(neighbour.X + learningRate * (point.X - neighbour.X));
-                            newY = (int)(neighbour.Y + learningRate * (point.Y - neighbour.Y));
-                            neighbour.X = newX;
-                            neighbour.Y = newY;
-                        }
+                        int neighborNewX = (int)(neighbor.X + learningRate * (point.X - neighbor.X));
+                        int neighborNewY = (int)(neighbor.Y + learningRate * (point.Y - neighbor.Y));
+                        neighbor.X = neighborNewX;
+                        neighbor.Y = neighborNewY;
                     }
                 }
                 epoch++;
             }
 
             graphics.Clear(Color.FromArgb(47, 47, 47));
-            drawPoints(points);
             drawAxis();
+            drawPoints(points);
             drawNeightbourLines(neuronMatrix);
 
 
         }
-        private Dot findNearestNeuron(Dot[,] neuronMatrix, Dot point)
+        private Dot findClosestNeuron(Dot[,] neuronMatrix, Dot point)
         {
-            double minDistance = 1000000;
-            Dot nearest = null;
-
-            for (int i = 0; i < neuronMatrixSize; i++)
+            double minDistance = 10000000;
+            Dot closest = null;
+            foreach (var neuron in neuronMatrix)
             {
-                for (int j = 0; j < neuronMatrixSize; j++)
+                double dist = euclidianDistance(point, neuron);
+                if (dist < minDistance)
                 {
-                    Dot currentNeuron = neuronMatrix[i, j];
-                    double currentDistance = distance(point, currentNeuron);
-
-                    if (currentDistance < minDistance)
-                    {
-                        minDistance = currentDistance;
-                        nearest = currentNeuron;
-                    }
+                    minDistance = dist;
+                    closest = neuron;
                 }
             }
 
-            return nearest;
+            return closest;
         }
         private Dot[,] initNeuronPositions(int neuronMatrixSize)
         {
@@ -154,14 +139,6 @@ namespace Kmeans2
 
             int xStep = realGraphWidth / neuronMatrixSize;
             int yStep = realGraphHeight / neuronMatrixSize;
-
-            //for (int i = -realGraphWidth / 2 + xStep / 2, lineCount = 0; i < realGraphWidth / 2; i += xStep, lineCount++)
-            //{
-            //    for (int j = -realGraphHeight / 2 + yStep / 2, columnCount = 0; j < realGraphHeight / 2; j += yStep, columnCount++)
-            //    {
-            //        output[lineCount, 9 - columnCount] = new Dot(i, j);
-            //    }
-            //}
 
             for (int i = -realGraphWidth / 2 + xStep / 2, columnCount = 0; i < realGraphWidth / 2; i += xStep, columnCount++)
             {
@@ -173,65 +150,46 @@ namespace Kmeans2
 
             return output;
         }
-        public Tuple<int, int> CoordinatesOf(Dot[,] neuronMatrix, Dot point)
+        private Tuple<int, int> findCoordinate(Dot[,] neuronMatrix, Dot origin)
         {
-            int w = neuronMatrix.GetLength(0); // width
-            int h = neuronMatrix.GetLength(1); // height
-
-            for (int x = 0; x < w; ++x)
+            for (int i = 0; i < neuronMatrixSize; i++)
             {
-                for (int y = 0; y < h; ++y)
+                for (int j = 0; j < neuronMatrixSize; j++)
                 {
-                    if (neuronMatrix[x, y].Equals(point))
-                        return Tuple.Create(x, y);
+                    if (neuronMatrix[i, j] == origin)
+                    {
+                        return new Tuple<int, int>(i, j);
+                    }
                 }
             }
-
-            return Tuple.Create(-1, -1);
+            return null;
         }
-        private List<Dot> findNeighbours(Dot[,] neuronMatrix, Dot point, int neighbourhoodDistance)
+        private List<Dot> findNeighbors(Dot[,] neuronMatrix, Dot origin, int distance)
         {
-            List<Dot> neightbours = new List<Dot>();
-            Tuple<int, int> origin = CoordinatesOf(neuronMatrix, point);
+            List<Dot> neighbors = new List<Dot>();
 
-            int originX = origin.Item1;
-            int originY = origin.Item2;
+            Tuple<int, int> originCoordinates = findCoordinate(neuronMatrix, origin);
 
-
-            for (int i = originX - neighbourhoodDistance; i <= originX + neighbourhoodDistance; i++)
+            for (int i = originCoordinates.Item1 - distance; i <= originCoordinates.Item1 + distance; i++)
             {
-                for (int j = originY - neighbourhoodDistance; j <= originY + neighbourhoodDistance; j++)
+                for (int j = originCoordinates.Item2 - distance; j <= originCoordinates.Item2 + distance; j++)
                 {
-                    if (i >= 0 && i < neuronMatrixSize)
+                    if (i > 0 && i < neuronMatrixSize)
                     {
-                        if (j >= 0 && j < neuronMatrixSize)
+                        if (j > 0 && j < neuronMatrixSize)
                         {
-                            if (neuronMatrix[i, j] != point)
+                            if (neuronMatrix[i, j] != origin)
                             {
-                                neightbours.Add(neuronMatrix[i, j]);
+                                neighbors.Add(neuronMatrix[i, j]);
                             }
                         }
                     }
 
                 }
-
             }
 
-            return neightbours;
-        }
-        private void drawNeurons(Dot[,] neuroMatrix)
-        {
-            SolidBrush blackBrush = new SolidBrush(Color.White);
 
-            for (int i = 0; i < neuronMatrixSize; i++)
-            {
-                for (int j = 0; j < neuronMatrixSize; j++)
-                {
-                    Dot converted = convertToScreen(neuronMatrix[i, j]);
-
-                    graphics.FillEllipse(blackBrush, new Rectangle(converted.getX() - radius, converted.getY() - radius, 2 * radius, 2 * radius));
-                }
-            }
+            return neighbors;
         }
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
@@ -285,11 +243,14 @@ namespace Kmeans2
                 }
             }
         }
-        private void drawPoint(Dot point, int size)
+        private void drawNeuron(Dot neuron, Color color)
         {
-            Dot converted = convertToScreen(point);
-            Brush whiteBrush = new SolidBrush(Color.White);
-            graphics.FillEllipse(whiteBrush, new Rectangle(converted.X - size, converted.Y - size, 2 * size, 2 * size));
+            SolidBrush brush = new SolidBrush(color);
+            Dot converted = convertToScreen(neuron);
+            int bigRadius = 5;
+            graphics.FillEllipse(brush, new Rectangle(converted.X - bigRadius, converted.Y - bigRadius, 2 * bigRadius, 2 * bigRadius));
+            graphics.FillEllipse(brush, new Rectangle(converted.X - radius, converted.Y - radius, 2 * radius, 2 * radius));
+
         }
         private Dot convertToScreen(Dot input)
         {
