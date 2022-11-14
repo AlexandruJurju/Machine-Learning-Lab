@@ -79,10 +79,10 @@ namespace Kmeans2
             double learningRate = 0.7;
             double neighbourhoodDistance = 6.1;
             int epoch = 0;
-            double epochsLearning = 500.0;
-            while (learningRate > 0.1)
+            double epochsLearning = 100.0;
+            while (learningRate > 0.01)
             {
-                learningRate = 0.6 * Math.Exp(-epoch / epochsLearning);
+                learningRate = 0.7 * Math.Exp(-epoch / epochsLearning);
                 neighbourhoodDistance = 6.1 * Math.Exp(-epoch / epochsLearning);
 
                 textBoxPrinting.Text = "Epoch " + epoch + Environment.NewLine;
@@ -172,9 +172,9 @@ namespace Kmeans2
             {
                 for (int j = originCoordinates.Item2 - distance; j <= originCoordinates.Item2 + distance; j++)
                 {
-                    if (i > 0 && i < neuronMatrixSize)
+                    if (i >= 0 && i < neuronMatrixSize)
                     {
-                        if (j > 0 && j < neuronMatrixSize)
+                        if (j >= 0 && j < neuronMatrixSize)
                         {
                             if (neuronMatrix[i, j] != origin)
                             {
