@@ -114,8 +114,6 @@ namespace Kmeans2
             drawAxis();
             drawPoints(points);
             drawNeightbourLines(neuronMatrix);
-
-
         }
         private Dot findClosestNeuron(Dot[,] neuronMatrix, Dot point)
         {
