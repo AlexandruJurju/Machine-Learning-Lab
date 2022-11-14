@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj": {}
+    "C:\\Repos\\Invatare-Automata\\Kmeans2\\Kmeans2.csproj": {}
   },
   "projects": {
-    "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj": {
+    "C:\\Repos\\Invatare-Automata\\Kmeans2\\Kmeans2.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj",
+        "projectUniqueName": "C:\\Repos\\Invatare-Automata\\Kmeans2\\Kmeans2.csproj",
         "projectName": "Kmeans2",
-        "projectPath": "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj",
-        "packagesPath": "C:\\Users\\realb\\.nuget\\packages\\",
-        "outputPath": "X:\\School Repos\\Invatare Automata\\Kmeans2\\obj\\",
+        "projectPath": "C:\\Repos\\Invatare-Automata\\Kmeans2\\Kmeans2.csproj",
+        "packagesPath": "C:\\Users\\Alex\\.nuget\\packages\\",
+        "outputPath": "C:\\Repos\\Invatare-Automata\\Kmeans2\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\realb\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Alex\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -62,7 +62,7 @@
               "privateAssets": "none"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }

@@ -32,3 +32,20 @@ X:\School Repos\Invatare Automata\Kmeans2\obj\Debug\net6.0-windows\refint\Kmeans
 X:\School Repos\Invatare Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.pdb
 X:\School Repos\Invatare Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.genruntimeconfig.cache
 X:\School Repos\Invatare Automata\Kmeans2\obj\Debug\net6.0-windows\ref\Kmeans2.dll
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.AssemblyReference.cache
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.MainForm.resources
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.GenerateResource.cache
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.GeneratedMSBuildEditorConfig.editorconfig
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.AssemblyInfoInputs.cache
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.AssemblyInfo.cs
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.csproj.CoreCompileInputs.cache
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.dll
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\refint\Kmeans2.dll
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.pdb
+C:\Repos\Invatare-Automata\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.exe
+C:\Repos\Invatare-Automata\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.deps.json
+C:\Repos\Invatare-Automata\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.runtimeconfig.json
+C:\Repos\Invatare-Automata\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.dll
+C:\Repos\Invatare-Automata\Kmeans2\bin\Debug\net6.0-windows\Kmeans2.pdb
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\Kmeans2.genruntimeconfig.cache
+C:\Repos\Invatare-Automata\Kmeans2\obj\Debug\net6.0-windows\ref\Kmeans2.dll

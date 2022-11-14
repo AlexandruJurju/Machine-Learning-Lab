@@ -30,7 +30,7 @@ namespace Kmeans2
         Dictionary<Color, SolidBrush> brushDictionary = new Dictionary<Color, SolidBrush>();
 
         int neuronMatrixSize = 10;
-        Dot[,] neuronMatrix;
+        Neuron[,] neuronMatrix;
 
         public MainForm()
         {
@@ -57,7 +57,7 @@ namespace Kmeans2
 
             neuronMatrix = initNeuronPositions(neuronMatrixSize);
 
-            List<Dot> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
+            List<Neuron> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
 
             for (int i = 0; i < neuronMatrixSize; i++)
             {
@@ -91,23 +91,31 @@ namespace Kmeans2
 
                 foreach (var point in points)
                 {
-                    Dot closest = findClosestNeuron(neuronMatrix, point);
+                    Neuron closest = findClosestNeuron(neuronMatrix, point);
 
-                    int newX = (int)(closest.X + learningRate * (point.X - closest.X));
-                    int newY = (int)(closest.Y + learningRate * (point.Y - closest.Y));
+                    double newWeightX = closest.WeightX + learningRate * (point.X - closest.WeightX);
+                    double newWeightY = closest.WeightY + learningRate * (point.Y - closest.WeightY);
 
+                    closest.WeightX = newWeightX;
+                    closest.WeightY = newWeightY;
 
-                    List<Dot> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
+                    List<Neuron> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
 
                     foreach (var neighbor in neighbors)
                     {
-                        int neighborNewX = (int)(neighbor.X + learningRate * (point.X - neighbor.X));
-                        int neighborNewY = (int)(neighbor.Y + learningRate * (point.Y - neighbor.Y));
-                        neighbor.X = neighborNewX;
-                        neighbor.Y = neighborNewY;
+                        double neighborNewWeightX = neighbor.WeightX + learningRate * (point.X - neighbor.WeightX);
+                        double neighborNewWeightY = neighbor.WeightY + learningRate * (point.Y - neighbor.WeightY);
+                        neighbor.WeightX = neighborNewWeightX;
+                        neighbor.WeightY = neighborNewWeightY;
                     }
                 }
                 epoch++;
+            }
+
+            foreach(var neuron in neuronMatrix)
+            {
+                neuron.X = (int)neuron.WeightX;
+                neuron.Y = (int)neuron.WeightY;
             }
 
             graphics.Clear(Color.FromArgb(47, 47, 47));
@@ -115,10 +123,10 @@ namespace Kmeans2
             drawPoints(points);
             drawNeightbourLines(neuronMatrix);
         }
-        private Dot findClosestNeuron(Dot[,] neuronMatrix, Dot point)
+        private Neuron findClosestNeuron(Neuron[,] neuronMatrix, Dot point)
         {
             double minDistance = 10000000;
-            Dot closest = null;
+            Neuron closest = null;
             foreach (var neuron in neuronMatrix)
             {
                 double dist = euclidianDistance(point, neuron);
@@ -131,9 +139,9 @@ namespace Kmeans2
 
             return closest;
         }
-        private Dot[,] initNeuronPositions(int neuronMatrixSize)
+        private Neuron[,] initNeuronPositions(int neuronMatrixSize)
         {
-            Dot[,] output = new Dot[neuronMatrixSize, neuronMatrixSize];
+            Neuron[,] output = new Neuron[neuronMatrixSize, neuronMatrixSize];
 
             int xStep = realGraphWidth / neuronMatrixSize;
             int yStep = realGraphHeight / neuronMatrixSize;
@@ -142,7 +150,7 @@ namespace Kmeans2
             {
                 for (int j = realGraphHeight / 2 - yStep / 2, lineCount = 0; j > -realGraphHeight / 2; j -= yStep, lineCount++)
                 {
-                    output[lineCount, columnCount] = new Dot(i, j);
+                    output[lineCount, columnCount] = new Neuron(i, j, i, j);
                 }
             }
 
@@ -162,9 +170,9 @@ namespace Kmeans2
             }
             return null;
         }
-        private List<Dot> findNeighbors(Dot[,] neuronMatrix, Dot origin, int distance)
+        private List<Neuron> findNeighbors(Neuron[,] neuronMatrix, Neuron origin, int distance)
         {
-            List<Dot> neighbors = new List<Dot>();
+            List<Neuron> neighbors = new List<Neuron>();
 
             Tuple<int, int> originCoordinates = findCoordinate(neuronMatrix, origin);
 
@@ -330,7 +338,7 @@ namespace Kmeans2
         {
             List<MyPoint> readPoints = new List<MyPoint>();
 
-            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
+            var lines = File.ReadLines(@"C:\Repos\Invatare-Automata\Kmeans2\points.txt");
 
             foreach (var line in lines)
             {
