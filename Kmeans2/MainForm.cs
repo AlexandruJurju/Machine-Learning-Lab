@@ -79,7 +79,7 @@ namespace Kmeans2
             double learningRate = 0.7;
             double neighbourhoodDistance = 6.1;
             int epoch = 0;
-            double epochsLearning = 100.0;
+            double epochsLearning = 200.0;
             while (learningRate > 0.01)
             {
                 learningRate = 0.7 * Math.Exp(-epoch / epochsLearning);
@@ -101,21 +101,38 @@ namespace Kmeans2
 
                     List<Neuron> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
 
-                    foreach (var neighbor in neighbors)
+                    if (neighbors.Count > 0)
                     {
-                        double neighborNewWeightX = neighbor.WeightX + learningRate * (point.X - neighbor.WeightX);
-                        double neighborNewWeightY = neighbor.WeightY + learningRate * (point.Y - neighbor.WeightY);
-                        neighbor.WeightX = neighborNewWeightX;
-                        neighbor.WeightY = neighborNewWeightY;
+                        foreach (var neighbor in neighbors)
+                        {
+                            double neighborNewWeightX = neighbor.WeightX + learningRate * (point.X - neighbor.WeightX);
+                            double neighborNewWeightY = neighbor.WeightY + learningRate * (point.Y - neighbor.WeightY);
+                            neighbor.WeightX = neighborNewWeightX;
+                            neighbor.WeightY = neighborNewWeightY;
+                        }
                     }
                 }
                 epoch++;
             }
 
-            foreach(var neuron in neuronMatrix)
+            foreach (var neuron in neuronMatrix)
             {
                 neuron.X = (int)neuron.WeightX;
                 neuron.Y = (int)neuron.WeightY;
+            }
+
+            List<Neuron> prevNeurons = new List<Neuron>();
+            foreach (var neuron in neuronMatrix)
+            {
+                graphics.Clear(Color.FromArgb(47, 47, 47));
+
+                foreach (var neuros in prevNeurons)
+                {
+                    drawNeuron(neuros, Color.Red);
+                }
+                drawNeuron(neuron, Color.Cyan);
+                prevNeurons.Add(neuron);
+                Thread.Sleep(1000);
             }
 
             graphics.Clear(Color.FromArgb(47, 47, 47));
@@ -253,7 +270,7 @@ namespace Kmeans2
         {
             SolidBrush brush = new SolidBrush(color);
             Dot converted = convertToScreen(neuron);
-            int bigRadius = 5;
+            int bigRadius = 2;
             graphics.FillEllipse(brush, new Rectangle(converted.X - bigRadius, converted.Y - bigRadius, 2 * bigRadius, 2 * bigRadius));
             graphics.FillEllipse(brush, new Rectangle(converted.X - radius, converted.Y - radius, 2 * radius, 2 * radius));
 
