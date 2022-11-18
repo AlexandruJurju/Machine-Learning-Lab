@@ -2,6 +2,7 @@ using Kmeans2.Classes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Reflection;
 using System.Security.Policy;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -76,13 +77,14 @@ namespace Kmeans2
         }
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
-            double learningRate = 0.7;
+            double learningRate = 0.6;
             double neighbourhoodDistance = 6.1;
             int epoch = 0;
-            double epochsLearning = 200.0;
+            double epochsLearning = 250.0;
+
             while (learningRate > 0.01)
             {
-                learningRate = 0.7 * Math.Exp(-epoch / epochsLearning);
+                learningRate = 0.6 * Math.Exp(-epoch / epochsLearning);
                 neighbourhoodDistance = 6.1 * Math.Exp(-epoch / epochsLearning);
 
                 textBoxPrinting.Text = "Epoch " + epoch + Environment.NewLine;
@@ -121,6 +123,16 @@ namespace Kmeans2
                 neuron.Y = (int)neuron.WeightY;
             }
 
+            //drawNeuronsOneByOne();
+
+            graphics.Clear(Color.FromArgb(47, 47, 47));
+            drawAxis();
+            drawPoints(points);
+            drawNeightbourLines(neuronMatrix);
+        }
+
+        private void drawNeuronsOneByOne()
+        {
             List<Neuron> prevNeurons = new List<Neuron>();
             foreach (var neuron in neuronMatrix)
             {
@@ -134,24 +146,47 @@ namespace Kmeans2
                 prevNeurons.Add(neuron);
                 Thread.Sleep(1000);
             }
-
-            graphics.Clear(Color.FromArgb(47, 47, 47));
-            drawAxis();
-            drawPoints(points);
-            drawNeightbourLines(neuronMatrix);
         }
+
+        private double neuronDistanceToPoint(Dot point, Neuron neuron)
+        {
+            double dX = neuron.WeightX - point.X;
+            double dY = neuron.WeightY - point.Y;
+            return Math.Sqrt(dX * dX + dY * dY);
+        }
+
+        // find closest neuron should use neuron weight
         private Neuron findClosestNeuron(Neuron[,] neuronMatrix, Dot point)
         {
-            double minDistance = 10000000;
+            double minDistance = double.MaxValue;
             Neuron closest = null;
-            foreach (var neuron in neuronMatrix)
+            for (int i = 0; i < neuronMatrixSize; i++)
             {
-                double dist = euclidianDistance(point, neuron);
-                if (dist < minDistance)
+                for (int j = 0; j < neuronMatrixSize; j++)
                 {
-                    minDistance = dist;
-                    closest = neuron;
+                    Neuron currentNeuron = neuronMatrix[i, j];
+                    double currentDistance = neuronDistanceToPoint(point, currentNeuron);
+                    if (currentDistance < minDistance)
+                    {
+                        minDistance = currentDistance;
+                        closest = currentNeuron;
+                    }
                 }
+            }
+
+            //foreach (var neuron in neuronMatrix)
+            //{
+            //    double currentDistance = distance(point, neuron);
+            //    if (currentDistance < minDistance)
+            //    {
+            //        minDistance = currentDistance;
+            //        closest = neuron;
+            //    }
+            //}
+
+            if (closest == null)
+            {
+                throw new Exception("ERROR");
             }
 
             return closest;
@@ -216,7 +251,7 @@ namespace Kmeans2
         }
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
-            Pen whitePen = new Pen(Color.Black, 2);
+            Pen linePen = new Pen(Color.Black, 3);
 
             for (int i = 0; i < neuronMatrixSize; i++)
             {
@@ -261,7 +296,7 @@ namespace Kmeans2
 
                         Dot convertedNeightbour = convertToScreen(neightbor);
 
-                        graphics.DrawLine(whitePen, convertedNeuron.X, convertedNeuron.Y, convertedNeightbour.X, convertedNeightbour.Y);
+                        graphics.DrawLine(linePen, convertedNeuron.X, convertedNeuron.Y, convertedNeightbour.X, convertedNeightbour.Y);
                     }
                 }
             }
@@ -355,7 +390,7 @@ namespace Kmeans2
         {
             List<MyPoint> readPoints = new List<MyPoint>();
 
-            var lines = File.ReadLines(@"C:\Repos\Invatare-Automata\Kmeans2\points.txt");
+            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
 
             foreach (var line in lines)
             {
@@ -371,8 +406,8 @@ namespace Kmeans2
         }
         private double euclidianDistance(Dot point1, Dot point2)
         {
-            int dX = point2.getX() - point1.getX();
-            int dY = point2.getY() - point1.getY();
+            double dX = point2.X - point1.X;
+            double dY = point2.Y - point1.Y;
             return Math.Sqrt(dX * dX + dY * dY);
         }
         private double manhattanDistance(Dot point1, Dot point2)
