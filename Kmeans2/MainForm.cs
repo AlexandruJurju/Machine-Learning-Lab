@@ -56,25 +56,31 @@ namespace Kmeans2
         {
             drawAxis();
 
-            neuronMatrix = initNeuronPositions(neuronMatrixSize);
+            MyPoint pt = new MyPoint(100, 100, 1);
+            List<MyPoint> notMyPo = new List<MyPoint>();
+            notMyPo.Add(pt);
+            drawPoints(notMyPo);
 
-            List<Neuron> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
+            //neuronMatrix = initNeuronPositions(neuronMatrixSize);
 
-            for (int i = 0; i < neuronMatrixSize; i++)
-            {
-                for (int j = 0; j < neuronMatrixSize; j++)
-                {
-                    drawNeuron(neuronMatrix[i, j], Color.Cyan);
-                }
-            }
+            //List<Neuron> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
 
-            foreach (var neigh in neighbors)
-            {
-                drawNeuron(neigh, Color.White);
-            }
+            //for (int i = 0; i < neuronMatrixSize; i++)
+            //{
+            //    for (int j = 0; j < neuronMatrixSize; j++)
+            //    {
+            //        drawNeuron(neuronMatrix[i, j], Color.Cyan);
+            //    }
+            //}
 
-            drawNeuron(neuronMatrix[3, 3], Color.Crimson);
+            //foreach (var neigh in neighbors)
+            //{
+            //    drawNeuron(neigh, Color.White);
+            //}
+
+            //drawNeuron(neuronMatrix[3, 3], Color.Crimson);
         }
+
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
         {
             double learningRate = 0.6;
@@ -101,7 +107,7 @@ namespace Kmeans2
                     closest.WeightX = newWeightX;
                     closest.WeightY = newWeightY;
 
-                    List<Neuron> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
+                    List<Neuron> neighbors = findNeighborsByDistance(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
 
                     if (neighbors.Count > 0)
                     {
@@ -222,15 +228,15 @@ namespace Kmeans2
             }
             return null;
         }
-        private List<Neuron> findNeighbors(Neuron[,] neuronMatrix, Neuron origin, int distance)
+        private List<Neuron> findNeighbors(Neuron[,] neuronMatrix, Neuron origin, int neighborhood)
         {
             List<Neuron> neighbors = new List<Neuron>();
 
             Tuple<int, int> originCoordinates = findCoordinate(neuronMatrix, origin);
 
-            for (int i = originCoordinates.Item1 - distance; i <= originCoordinates.Item1 + distance; i++)
+            for (int i = originCoordinates.Item1 - neighborhood; i <= originCoordinates.Item1 + neighborhood; i++)
             {
-                for (int j = originCoordinates.Item2 - distance; j <= originCoordinates.Item2 + distance; j++)
+                for (int j = originCoordinates.Item2 - neighborhood; j <= originCoordinates.Item2 + neighborhood; j++)
                 {
                     if (i >= 0 && i < neuronMatrixSize)
                     {
@@ -249,6 +255,37 @@ namespace Kmeans2
 
             return neighbors;
         }
+
+        private List<Neuron> findNeighborsByDistance(Neuron[,] neuronMatrix, Neuron origin, int neighborhood)
+        {
+            List<Neuron> tempNeigh = new List<Neuron>();
+
+            List<Neuron> neightbors = new List<Neuron>();
+
+            Dictionary<Neuron, double> neuronDistances = new Dictionary<Neuron, double>();
+
+            foreach (var neuron in neuronMatrix)
+            {
+                neuronDistances[neuron] = distance(origin, neuron);
+            }
+
+            var sortedDict = from entry in neuronDistances orderby entry.Value ascending select entry;
+
+
+            foreach (var elem in neuronDistances)
+            {
+                tempNeigh.Add(elem.Key);
+            }
+
+            for (int i = 0; i < neighborhood; i++)
+            {
+                neightbors.Add(tempNeigh[i]);
+            }
+
+            return neightbors;
+
+        }
+
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
             Pen linePen = new Pen(Color.Black, 3);
