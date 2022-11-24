@@ -34,6 +34,7 @@
             this.buttonDrawNeurons = new System.Windows.Forms.Button();
             this.buttonSOMFullRun = new System.Windows.Forms.Button();
             this.buttonDrawOutlines = new System.Windows.Forms.Button();
+            this.buttonGeneratePoints = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonStep
@@ -95,12 +96,23 @@
             this.buttonDrawOutlines.UseVisualStyleBackColor = true;
             this.buttonDrawOutlines.Click += new System.EventHandler(this.buttonDrawOutlines_Click);
             // 
+            // buttonGeneratePoints
+            // 
+            this.buttonGeneratePoints.Location = new System.Drawing.Point(756, 36);
+            this.buttonGeneratePoints.Name = "buttonGeneratePoints";
+            this.buttonGeneratePoints.Size = new System.Drawing.Size(75, 38);
+            this.buttonGeneratePoints.TabIndex = 6;
+            this.buttonGeneratePoints.Text = "Generate Points";
+            this.buttonGeneratePoints.UseVisualStyleBackColor = true;
+            this.buttonGeneratePoints.Click += new System.EventHandler(this.buttonGeneratePoints_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AntiqueWhite;
             this.ClientSize = new System.Drawing.Size(1186, 711);
+            this.Controls.Add(this.buttonGeneratePoints);
             this.Controls.Add(this.buttonDrawOutlines);
             this.Controls.Add(this.buttonSOMFullRun);
             this.Controls.Add(this.buttonDrawNeurons);
@@ -123,5 +135,6 @@
         private Button buttonDrawNeurons;
         private Button buttonSOMFullRun;
         private Button buttonDrawOutlines;
+        private Button buttonGeneratePoints;
     }
 }

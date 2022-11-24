@@ -788,5 +788,25 @@ namespace Kmeans2
             textBoxPrinting.AppendText(Environment.NewLine);
             textBoxPrinting.AppendText(Environment.NewLine);
         }
+
+        private async void buttonGeneratePoints_Click(object sender, EventArgs e)
+        {
+            List<MyZone> zoneList = new List<MyZone>();
+            zoneList.Add(new MyZone(180, 220, 25, 15));
+            zoneList.Add(new MyZone(50, 25, 20, 20));
+            zoneList.Add(new MyZone(-150, -100, 20, 15));
+            zoneList.Add(new MyZone(200, -125, 30, 10));
+
+            List<MyPoint> myPoints = GeneratePoints.getPoints(zoneList, 10000, true);
+
+            using StreamWriter file = new(@"X:\\School Repos\\Invatare Automata\\Kmeans2\\points.txt");
+
+            foreach (var point in myPoints)
+            {
+                await file.WriteLineAsync(point.X + " " + point.Y + " " + point.getZone());
+            }
+
+            textBoxPrinting.Text = "Done generating points";
+        }
     }
 }

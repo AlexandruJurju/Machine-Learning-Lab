@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Kmeans2.Classes
 {
-    public class Zone
+    public class MyZone
     {
 
         private int mX;
@@ -14,7 +14,7 @@ namespace Kmeans2.Classes
         private int sigmaX;
         private int sigmaY;
 
-        public Zone(int mX, int mY, int sigmaX, int sigmaY)
+        public MyZone(int mX, int mY, int sigmaX, int sigmaY)
         {
             this.mX = mX;
             this.mY = mY;

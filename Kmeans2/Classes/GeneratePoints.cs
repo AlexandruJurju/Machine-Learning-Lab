@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 
 namespace Kmeans2.Classes
 {
-    public class Controller
+    public static class GeneratePoints
     {
 
-        public double roundAvoid(double value, int places)
+        public static double roundAvoid(double value, int places)
         {
             double scale = Math.Pow(10, places);
             return Math.Round(value * scale) / scale;
         }
 
-        public double gauss(int coordinate, int m, int sigma)
+        public static double gauss(int coordinate, int m, int sigma)
         {
             double gaussRez = Math.Exp((double)-(((m - coordinate) * (m - coordinate)) / (2 * sigma * sigma)));
             return roundAvoid(gaussRez, 20);
         }
 
-        public List<MyPoint> getPoints(List<MyZone> zoneList, int pointsToFind)
+        public static List<MyPoint> getPoints(List<MyZone> zoneList, int pointsToFind, bool withNoise)
         {
 
             List<MyPoint> output = new List<MyPoint>();
@@ -49,7 +49,7 @@ namespace Kmeans2.Classes
                         xCoord = x;
                         foundX = true;
                     }
-                    else if (gaussRez == 0 && rand.NextDouble() < 0.00001)
+                    else if (withNoise && gaussRez == 0 && rand.NextDouble() < 0.00001)
                     {
                         xCoord = x;
                         foundX = true;
@@ -66,7 +66,7 @@ namespace Kmeans2.Classes
                         yCoord = y;
                         foundY = true;
                     }
-                    else if (gaussRez == 0 && rand.NextDouble() < 0.00001)
+                    else if (withNoise && gaussRez == 0 && rand.NextDouble() < 0.00001)
                     {
                         yCoord = y;
                         foundY = true;
@@ -79,10 +79,6 @@ namespace Kmeans2.Classes
             }
 
             return output;
-        }
-
-        public void writePoints(List<MyPoint> points)
-        {
         }
 
     }
