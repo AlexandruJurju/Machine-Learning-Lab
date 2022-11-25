@@ -86,7 +86,7 @@ namespace Kmeans2
             double learningRate = 0.6;
             double neighbourhoodDistance = 6.1;
             int epoch = 0;
-            double epochsLearning = 250.0;
+            double epochsLearning = 10.0;
 
             while (learningRate > 0.01)
             {
@@ -107,7 +107,7 @@ namespace Kmeans2
                     closest.WeightX = newWeightX;
                     closest.WeightY = newWeightY;
 
-                    List<Neuron> neighbors = findNeighborsByDistance(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
+                    List<Neuron> neighbors = findNeighbors(neuronMatrix, closest, (int)Math.Round(neighbourhoodDistance));
 
                     if (neighbors.Count > 0)
                     {

@@ -1,8 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "rlKfZDcKWWMJw0NV1U9QWUGDN2srRQz0J/mMgcp0vbIDgO/I5exdSxvXvqYvC8bFWaXx1UPtJnWu5PNdQ6bQtg==",
+  "dgSpecHash": "a1Czw73GhLx2UIdifn1Uac7V2W95R3sNwOpl9PESqmqFCtMATVixeXFO7cMaOZGYAWJOKu8IUlGhVSCT1z8iYw==",
   "success": true,
   "projectFilePath": "X:\\School Repos\\Invatare Automata\\Kmeans2\\Kmeans2.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\realb\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\6.0.11\\microsoft.netcore.app.host.win-x64.6.0.11.nupkg.sha512",
+    "C:\\Users\\realb\\.nuget\\packages\\microsoft.aspnetcore.app.ref\\6.0.11\\microsoft.aspnetcore.app.ref.6.0.11.nupkg.sha512",
+    "C:\\Users\\realb\\.nuget\\packages\\microsoft.windowsdesktop.app.ref\\6.0.11\\microsoft.windowsdesktop.app.ref.6.0.11.nupkg.sha512",
+    "C:\\Users\\realb\\.nuget\\packages\\microsoft.netcore.app.ref\\6.0.11\\microsoft.netcore.app.ref.6.0.11.nupkg.sha512"
+  ],
   "logs": []
 }
