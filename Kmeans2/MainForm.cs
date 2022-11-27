@@ -12,13 +12,12 @@ namespace Kmeans2
 {
     public partial class MainForm : Form
     {
-        int screenGraphWidth = 600;
-        int screenGraphHeight = 600;
+        int screenGraphWidth = 1000;
+        int screenGraphHeight = 1000;
         int realGraphWidth = 600;
         int realGraphHeight = 600;
         int yOffset = 50;
         int xOffset = 50;
-        int overflow = 30;
         List<MyPoint> points = new List<MyPoint>();
         Random random = new Random();
         Graphics graphics;
@@ -40,7 +39,7 @@ namespace Kmeans2
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //this.WindowState = FormWindowState.Maximized;
+            this.WindowState = FormWindowState.Maximized;
             this.graphics = this.CreateGraphics();
             this.BackColor = Color.FromArgb(47, 47, 47);
             initColors();
@@ -56,29 +55,8 @@ namespace Kmeans2
         {
             drawAxis();
 
-            MyPoint pt = new MyPoint(100, 100, 1);
-            List<MyPoint> notMyPo = new List<MyPoint>();
-            notMyPo.Add(pt);
-            drawPoints(notMyPo);
-
-            //neuronMatrix = initNeuronPositions(neuronMatrixSize);
-
-            //List<Neuron> neighbors = findNeighbors(neuronMatrix, neuronMatrix[3, 3], 1);
-
-            //for (int i = 0; i < neuronMatrixSize; i++)
-            //{
-            //    for (int j = 0; j < neuronMatrixSize; j++)
-            //    {
-            //        drawNeuron(neuronMatrix[i, j], Color.Cyan);
-            //    }
-            //}
-
-            //foreach (var neigh in neighbors)
-            //{
-            //    drawNeuron(neigh, Color.White);
-            //}
-
-            //drawNeuron(neuronMatrix[3, 3], Color.Crimson);
+            MyPoint pt = new MyPoint(-300, 300, 1);
+            drawNeuron(pt, Color.Crimson);
         }
 
         private void buttonSOMFullRun_Click(object sender, EventArgs e)
@@ -349,8 +327,8 @@ namespace Kmeans2
         }
         private Dot convertToScreen(Dot input)
         {
-            int screenX = input.X + screenGraphWidth / 2 + xOffset;
-            int screenY = screenGraphHeight / 2 - input.Y + yOffset;
+            int screenX = (int)2 * (input.X + screenGraphWidth / 2) - 300;
+            int screenY = (int)((screenGraphHeight / 2 - input.Y) * 2 - 300);
 
             return new Dot(screenX, screenY);
         }
@@ -360,50 +338,36 @@ namespace Kmeans2
         {
             Pen whitePen = new Pen(Color.White, 1);
 
-            int x1 = xOffset - overflow;
-            int y1 = screenGraphHeight / 2 + yOffset;
-            int x2 = screenGraphWidth + xOffset + overflow;
-            int y2 = screenGraphHeight / 2 + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            // x axis
+            Dot point1 = convertToScreen(new Dot(0, 300));
+            Dot point2 = convertToScreen(new Dot(0, -300));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
 
+            // y axis
+            point1 = convertToScreen(new Dot(300, 0));
+            point2 = convertToScreen(new Dot(-300, 0));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
 
-            x1 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y1 = yOffset - overflow;
-            x2 = (int)(screenGraphWidth / 2.0 + xOffset);
-            y2 = screenGraphHeight + yOffset + overflow;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
-
-
-            int xLimit = 300 + screenGraphWidth / 2;
-            int yLimit = screenGraphHeight / 2 - 300;
 
             //top
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + yOffset;
-            x2 = (xLimit + xOffset);
-            y2 = yLimit + yOffset;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            point1 = convertToScreen(new Dot(-300, 300));
+            point2 = convertToScreen(new Dot(300, 300));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
 
             // bottom
-            x1 = (xLimit - 600 + xOffset);
-            y1 = yLimit + 600 + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            point1 = convertToScreen(new Dot(-300, -300));
+            point2 = convertToScreen(new Dot(300, -300));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
 
             // left
-            x1 = xLimit - 600 + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit - 600 + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            point1 = convertToScreen(new Dot(-300, 300));
+            point2 = convertToScreen(new Dot(-300, -300));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
 
             // right
-            x1 = xLimit + xOffset;
-            y1 = yLimit + yOffset;
-            x2 = xLimit + xOffset;
-            y2 = yLimit + yOffset + 600;
-            graphics.DrawLine(whitePen, x1, y1, x2, y2);
+            point1 = convertToScreen(new Dot(300, 300));
+            point2 = convertToScreen(new Dot(300, -300));
+            graphics.DrawLine(whitePen, point1.X, point1.Y, point2.X, point2.Y);
         }
         private void initColors()
         {

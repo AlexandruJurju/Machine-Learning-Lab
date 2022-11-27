@@ -39,7 +39,7 @@
             // 
             // buttonStep
             // 
-            this.buttonStep.Location = new System.Drawing.Point(756, 94);
+            this.buttonStep.Location = new System.Drawing.Point(1564, 84);
             this.buttonStep.Name = "buttonStep";
             this.buttonStep.Size = new System.Drawing.Size(75, 41);
             this.buttonStep.TabIndex = 0;
@@ -49,7 +49,7 @@
             // 
             // buttonFullRun
             // 
-            this.buttonFullRun.Location = new System.Drawing.Point(867, 94);
+            this.buttonFullRun.Location = new System.Drawing.Point(1675, 84);
             this.buttonFullRun.Name = "buttonFullRun";
             this.buttonFullRun.Size = new System.Drawing.Size(75, 41);
             this.buttonFullRun.TabIndex = 1;
@@ -59,7 +59,7 @@
             // 
             // textBoxPrinting
             // 
-            this.textBoxPrinting.Location = new System.Drawing.Point(756, 250);
+            this.textBoxPrinting.Location = new System.Drawing.Point(1564, 240);
             this.textBoxPrinting.Multiline = true;
             this.textBoxPrinting.Name = "textBoxPrinting";
             this.textBoxPrinting.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -68,7 +68,7 @@
             // 
             // buttonDrawNeurons
             // 
-            this.buttonDrawNeurons.Location = new System.Drawing.Point(756, 159);
+            this.buttonDrawNeurons.Location = new System.Drawing.Point(1564, 149);
             this.buttonDrawNeurons.Name = "buttonDrawNeurons";
             this.buttonDrawNeurons.Size = new System.Drawing.Size(75, 42);
             this.buttonDrawNeurons.TabIndex = 3;
@@ -78,7 +78,7 @@
             // 
             // buttonSOMFullRun
             // 
-            this.buttonSOMFullRun.Location = new System.Drawing.Point(867, 159);
+            this.buttonSOMFullRun.Location = new System.Drawing.Point(1675, 149);
             this.buttonSOMFullRun.Name = "buttonSOMFullRun";
             this.buttonSOMFullRun.Size = new System.Drawing.Size(75, 42);
             this.buttonSOMFullRun.TabIndex = 4;
@@ -88,7 +88,7 @@
             // 
             // buttonDrawOutlines
             // 
-            this.buttonDrawOutlines.Location = new System.Drawing.Point(983, 94);
+            this.buttonDrawOutlines.Location = new System.Drawing.Point(1791, 84);
             this.buttonDrawOutlines.Name = "buttonDrawOutlines";
             this.buttonDrawOutlines.Size = new System.Drawing.Size(75, 41);
             this.buttonDrawOutlines.TabIndex = 5;
@@ -98,7 +98,7 @@
             // 
             // buttonGeneratePoints
             // 
-            this.buttonGeneratePoints.Location = new System.Drawing.Point(756, 36);
+            this.buttonGeneratePoints.Location = new System.Drawing.Point(1564, 26);
             this.buttonGeneratePoints.Name = "buttonGeneratePoints";
             this.buttonGeneratePoints.Size = new System.Drawing.Size(75, 38);
             this.buttonGeneratePoints.TabIndex = 6;
@@ -111,7 +111,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.AntiqueWhite;
-            this.ClientSize = new System.Drawing.Size(1186, 711);
+            this.ClientSize = new System.Drawing.Size(2060, 711);
             this.Controls.Add(this.buttonGeneratePoints);
             this.Controls.Add(this.buttonDrawOutlines);
             this.Controls.Add(this.buttonSOMFullRun);
