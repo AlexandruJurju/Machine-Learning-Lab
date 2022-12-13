@@ -99,6 +99,19 @@ namespace Kmeans2
                     }
                 }
                 epoch++;
+
+				foreach (var neuron in neuronMatrix)
+				{
+					neuron.X = (int)neuron.WeightX;
+					neuron.Y = (int)neuron.WeightY;
+				}
+
+				graphics.Clear(Color.FromArgb(47, 47, 47));
+				drawAxis();
+				drawPoints(points);
+				drawNeightbourLines(neuronMatrix);
+
+				Thread.Sleep(1000);
             }
 
             foreach (var neuron in neuronMatrix)
@@ -234,7 +247,7 @@ namespace Kmeans2
             return neighbors;
         }
 
-        private List<Neuron> findNeighborsByDistance(Neuron[,] neuronMatrix, Neuron origin, int neighborhood)
+/*        private List<Neuron> findNeighborsByDistance(Neuron[,] neuronMatrix, Neuron origin, int neighborhood)
         {
             List<Neuron> tempNeigh = new List<Neuron>();
 
@@ -255,14 +268,12 @@ namespace Kmeans2
                 tempNeigh.Add(elem.Key);
             }
 
-            for (int i = 0; i < neighborhood; i++)
+            foreach(var neuron in neuronDistances)
             {
-                neightbors.Add(tempNeigh[i]);
+
             }
 
-            return neightbors;
-
-        }
+        }*/
 
         private void drawNeightbourLines(Dot[,] neuronMatrix)
         {
@@ -327,8 +338,8 @@ namespace Kmeans2
         }
         private Dot convertToScreen(Dot input)
         {
-            int screenX = (int)2 * (input.X + screenGraphWidth / 2) - 300;
-            int screenY = (int)((screenGraphHeight / 2 - input.Y) * 2 - 300);
+            int screenX = (int)(input.X + screenGraphWidth / 2) ;
+            int screenY = (int)((screenGraphHeight / 2 - input.Y));
 
             return new Dot(screenX, screenY);
         }
@@ -391,7 +402,7 @@ namespace Kmeans2
         {
             List<MyPoint> readPoints = new List<MyPoint>();
 
-            var lines = File.ReadLines(@"X:\School Repos\Invatare Automata\Kmeans2\points.txt");
+            var lines = File.ReadLines(@"C:\Repos\Invatare-Automata\Kmeans2\points.txt");
 
             foreach (var line in lines)
             {

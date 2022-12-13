@@ -112,7 +112,7 @@ class NeuralNetwork:
     def train(self, loss, loss_prime, x_train, y_train, learning_rate) -> None:
         error = 1
         epoch = 0
-        while error > 0.0001:
+        while error > 0.001:
             error = 0
             for x, y in zip(x_train, y_train):
                 output = self.feed_forward(x)
@@ -125,7 +125,7 @@ class NeuralNetwork:
                 for layer in reversed(self.layers):
                     gradient = layer.backward(gradient, learning_rate)
 
-            error /= len(x_train)
+            # error /= len(x_train)
             epoch += 1
 
             print(f"epoch = {epoch}, error = {error}")
