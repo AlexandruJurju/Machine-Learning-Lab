@@ -61,9 +61,13 @@ def train_point_network(x, y, network: NeuralNetwork):
         x_test = np.reshape(x_test, (2,))
         file.write(f"{int(x_test[0] * 300)} {int(x_test[1] * 300)} {int(output_index)}" + "\n")
 
+        np.set_printoptions(suppress=True)
+        print(f"{np.reshape(output, (1, 4))}")
+
         if target_index != output_index:
             wrong_count += 1
-    # fara sa fie antrenat greseste 75%, logic ia random 1/4
+
+    # fara sa fie antrenat greseste 75%, logic random poate lua 1/4 bine
     print(f"Number of wrong predictions : {wrong_count}")
 
 
@@ -78,13 +82,9 @@ def train_xor(x, y, network: NeuralNetwork):
     for x_test, y_test in zip(x, y):
         output = network.feed_forward(x_test)
         # print(np.shape(x))
-
-        output_index = list(output).index(max(list(output)))
-        target_index = list(y_test).index(max(list(y_test)))
         print(f"target = {y_test}, output = {np.where(output > 0.5, 1, 0)}")
         print("============================================")
 
-        if target_index != output_index:
+        if y_test != np.where(output > 0.5, 1, 0):
             wrong_count += 1
-
-    print(f"{wrong_count / len(x)}")
+    print(f"Wrong predictions : {wrong_count}")
