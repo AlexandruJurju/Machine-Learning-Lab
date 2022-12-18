@@ -1,3 +1,6 @@
+import math
+import random
+
 import numpy as np
 
 
@@ -113,7 +116,7 @@ class NeuralNetwork:
         error = 10000
         epoch = 0
         # error doesn't have to be too small, when it gets rounded it doesn't matter too much
-        while error > 1000000:
+        while error > 0.000000000000000000000000001:
             error = 0
             for x, y in zip(x_train, y_train):
                 output = self.feed_forward(x)
