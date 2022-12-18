@@ -36,17 +36,17 @@ def read_points_data() -> Tuple:
 
 def get_xor_data() -> Tuple:
     x = [[0, 0], [0, 1], [1, 0], [1, 1]]
-    y = [[0], [1], [1], [0]]
+    y = [[0.1], [0.9], [0.9], [0.1]]
 
     return x, y
 
 
-def train_point_network(x, y, network: NeuralNetwork):
+def train_point_network(x, y, network: NeuralNetwork, learning_rate):
     # reshape length of x, number of inputs per line,
     x = np.reshape(x, (np.shape(x)[0], np.shape(x)[1], 1))
     y = np.reshape(y, (np.shape(y)[0], np.shape(y)[1], 1))
 
-    network.train(mse, mse_prime, x, y, 0.1)
+    network.train(mse, mse_prime, x, y, learning_rate)
 
     file = open("point_output.txt", "w")
     wrong_count = 0
@@ -59,7 +59,7 @@ def train_point_network(x, y, network: NeuralNetwork):
         # print(f"target = {target_index}, output = {output_index}")
         # print("============================================")
         x_test = np.reshape(x_test, (2,))
-        file.write(f"{int(x_test[0] * 300)} {int(x_test[1] * 300)} {int(output_index)}" + "\n")
+        file.write(f"{int(x_test[0] * 300)} {int(x_test[1] * 300)} {output_index}" + "\n")
 
         np.set_printoptions(suppress=True)
         print(f"{np.reshape(output, (1, 4))}")
@@ -82,9 +82,11 @@ def train_xor(x, y, network: NeuralNetwork):
     for x_test, y_test in zip(x, y):
         output = network.feed_forward(x_test)
         # print(np.shape(x))
-        print(f"target = {y_test}, output = {np.where(output > 0.5, 1, 0)}")
+        target = np.where(y_test > 0.5, 1, 0)
+        output = np.where(output > 0.5, 1, 0)
+        print(f"target = {target}, output = {output}")
         print("============================================")
 
-        if y_test != np.where(output > 0.5, 1, 0):
+        if target != output:
             wrong_count += 1
     print(f"Wrong predictions : {wrong_count}")

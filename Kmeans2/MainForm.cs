@@ -51,11 +51,12 @@ namespace Kmeans2
 
 		private void buttonDrawOutputPoints_Click(object sender, EventArgs e)
 		{
+			graphics.Clear(Color.FromArgb(47, 47, 47));
 			drawAxis();
-			foreach (var point in points)
-			{
-				drawPoint(point, Color.Black, 2);
-			}
+			//foreach (var point in points)
+			//{
+			//	drawPoint(point, Color.Black, 2);
+			//}
 
 			List<MyPoint> outputPoints = readPointsFromOutputFile();
 
@@ -70,8 +71,26 @@ namespace Kmeans2
 
 				drawPoint(point, zoneDictionary[zone], 2);
 			}
-
 		}
+
+		private void buttonDrawInputPoints_Click(object sender, EventArgs e)
+		{
+			drawAxis();
+
+			Dictionary<int, Color> zoneDictionary = new Dictionary<int, Color>();
+
+			foreach (var point in points)
+			{
+				int zone = point.getZone();
+				if (!zoneDictionary.ContainsKey(zone))
+				{
+					zoneDictionary.Add(zone, colorList[zoneDictionary.Count]);
+				}
+
+				drawPoint(point, zoneDictionary[zone], 1);
+			}
+		}
+
 
 		private List<MyPoint> readPointsFromOutputFile()
 		{

@@ -37,6 +37,7 @@
 			this.buttonGeneratePoints = new System.Windows.Forms.Button();
 			this.buttonDrawOutputPoints = new System.Windows.Forms.Button();
 			this.button2 = new System.Windows.Forms.Button();
+			this.buttonDrawInputPoints = new System.Windows.Forms.Button();
 			this.SuspendLayout();
 			// 
 			// buttonStep
@@ -110,9 +111,9 @@
 			// 
 			// buttonDrawOutputPoints
 			// 
-			this.buttonDrawOutputPoints.Location = new System.Drawing.Point(855, 192);
+			this.buttonDrawOutputPoints.Location = new System.Drawing.Point(982, 203);
 			this.buttonDrawOutputPoints.Name = "buttonDrawOutputPoints";
-			this.buttonDrawOutputPoints.Size = new System.Drawing.Size(133, 44);
+			this.buttonDrawOutputPoints.Size = new System.Drawing.Size(112, 38);
 			this.buttonDrawOutputPoints.TabIndex = 7;
 			this.buttonDrawOutputPoints.Text = "Draw Output Points";
 			this.buttonDrawOutputPoints.UseVisualStyleBackColor = true;
@@ -127,12 +128,23 @@
 			this.button2.Text = "button2";
 			this.button2.UseVisualStyleBackColor = true;
 			// 
+			// buttonDrawInputPoints
+			// 
+			this.buttonDrawInputPoints.Location = new System.Drawing.Point(855, 203);
+			this.buttonDrawInputPoints.Name = "buttonDrawInputPoints";
+			this.buttonDrawInputPoints.Size = new System.Drawing.Size(108, 38);
+			this.buttonDrawInputPoints.TabIndex = 9;
+			this.buttonDrawInputPoints.Text = "Draw Input Points";
+			this.buttonDrawInputPoints.UseVisualStyleBackColor = true;
+			this.buttonDrawInputPoints.Click += new System.EventHandler(this.buttonDrawInputPoints_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.AntiqueWhite;
 			this.ClientSize = new System.Drawing.Size(1285, 711);
+			this.Controls.Add(this.buttonDrawInputPoints);
 			this.Controls.Add(this.button2);
 			this.Controls.Add(this.buttonDrawOutputPoints);
 			this.Controls.Add(this.buttonGeneratePoints);
@@ -161,5 +173,6 @@
         private Button buttonGeneratePoints;
 		private Button buttonDrawOutputPoints;
 		private Button button2;
+		private Button buttonDrawInputPoints;
 	}
 }
