@@ -67,8 +67,16 @@ def train_point_network(x, y, network: NeuralNetwork, learning_rate):
         if target_index != output_index:
             wrong_count += 1
 
-    # fara sa fie antrenat greseste 75%, logic random poate lua 1/4 bine
     print(f"Number of wrong predictions : {wrong_count}")
+
+    for i in range(-300, 300):
+        for j in range(-300, 300):
+            output = (network.feed_forward(np.reshape((i / 300, j / 300), (2, 1))))
+            output_index = list(output).index(max(list(output)))
+            file.write(f"{i} {j} {output_index}" + "\n")
+
+    print("DONE")
+    file.close()
 
 
 def train_xor(x, y, network: NeuralNetwork):

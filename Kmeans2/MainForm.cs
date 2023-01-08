@@ -61,16 +61,33 @@ namespace Kmeans2
 			List<MyPoint> outputPoints = readPointsFromOutputFile();
 
 			Dictionary<int, Color> zoneDictionary = new Dictionary<int, Color>();
-			foreach (var point in outputPoints)
+			for (int i = 0; i < outputPoints.Count; i += 9)
 			{
+				MyPoint point = outputPoints[i];
 				int zone = point.getZone();
 				if (!zoneDictionary.ContainsKey(zone))
 				{
+					textBoxPrinting.Text += zoneDictionary.Count + " " + colorList[zoneDictionary.Count] + Environment.NewLine;
 					zoneDictionary.Add(zone, colorList[zoneDictionary.Count]);
 				}
 
 				drawPoint(point, zoneDictionary[zone], 2);
 			}
+
+			/*			foreach (var point in outputPoints)
+						{
+							int zone = point.getZone();
+							if (!zoneDictionary.ContainsKey(zone))
+							{
+								textBoxPrinting.Text += zoneDictionary.Count + " " + colorList[zoneDictionary.Count] + Environment.NewLine;
+								zoneDictionary.Add(zone, colorList[zoneDictionary.Count]);
+							}
+
+							drawPoint(point, zoneDictionary[zone], 1);
+						}*/
+
+			/*			MyPoint pointTest = new MyPoint(176, -142, 3);
+						drawPoint(pointTest, Color.Purple, 5);*/
 		}
 
 		private void buttonDrawInputPoints_Click(object sender, EventArgs e)
@@ -424,10 +441,10 @@ namespace Kmeans2
 		{
 			colorList.Add(Color.Blue);
 			colorList.Add(Color.Green);
-			colorList.Add(Color.MintCream);
-			colorList.Add(Color.MediumSpringGreen);
-			colorList.Add(Color.Sienna);
 			colorList.Add(Color.Red);
+			colorList.Add(Color.Yellow);
+			colorList.Add(Color.Cyan);
+			colorList.Add(Color.Honeydew);
 			colorList.Add(Color.HotPink);
 			colorList.Add(Color.Lime);
 			colorList.Add(Color.Purple);
